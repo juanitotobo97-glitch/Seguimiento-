@@ -1,261 +1,525 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Life Dashboard — Fitness OS v6</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root{--bg0:#08080a;--bg1:#0e0e12;--bg2:#141418;--bg3:#1a1a20;--bg4:#222228;--b1:#1e1e24;--t0:#f4f4f6;--t1:#c8c8d0;--t2:#8888a0;--t3:#55556a;--lime:#b8f000;--blue:#5b9df5;--orange:#f5a623;--red:#f55353;--green:#34d399;--purple:#a78bfa;--cyan:#22d3ee;--pink:#f472b6}
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:'DM Sans',sans-serif;background:var(--bg0);color:var(--t0);min-height:100vh;overflow-x:hidden}
-        #root{min-height:100vh}
-        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg1)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
-        textarea{font-family:inherit;resize:vertical}select{-webkit-appearance:none;appearance:none}
-        input[type=number]::-webkit-inner-spin-button{opacity:1}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-        .sidebar{width:210px;min-height:100vh;background:var(--bg1);border-right:1px solid var(--b1);padding:20px 0;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:10}
-        .main{margin-left:210px;flex:1;padding:24px 28px;min-height:100vh}
-        .mob-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg1);border-top:1px solid var(--b1);z-index:20;padding:6px 0 max(6px,env(safe-area-inset-bottom))}
-        .mob-btn{display:none;position:fixed;top:14px;left:14px;z-index:15;background:var(--bg1);border:1px solid var(--b1);border-radius:8px;padding:8px 12px;color:var(--t0);font-size:1.1rem;cursor:pointer}
-        .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9}
-        @media(max-width:768px){
-            .sidebar{transform:translateX(-100%);transition:transform 0.3s ease;z-index:20}
-            .sidebar.open{transform:translateX(0)}
-            .sidebar-overlay.open{display:block;z-index:19}
-            .main{margin-left:0;padding:16px 12px;padding-bottom:80px;padding-top:56px}
-            .mob-bar{display:flex;justify-content:space-around;align-items:center}
-            .mob-btn{display:block}
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Life Dashboard — Fitness OS v6</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg0:#08080a;--bg1:#0e0e12;--bg2:#141418;--bg3:#1a1a20;--bg4:#222228;--b1:#1e1e24;--t0:#f4f4f6;--t1:#c8c8d0;--t2:#8888a0;--t3:#55556a;--lime:#b8f000;--blue:#5b9df5;--orange:#f5a623;--red:#f55353;--green:#34d399;--purple:#a78bfa;--cyan:#22d3ee;--pink:#f472b6}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg0);color:var(--t0);min-height:100vh;overflow-x:hidden}
+#root{min-height:100vh}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg1)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+textarea{font-family:inherit;resize:vertical}select{-webkit-appearance:none;appearance:none}
+input[type=number]::-webkit-inner-spin-button{opacity:1}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.sidebar{width:210px;min-height:100vh;background:var(--bg1);border-right:1px solid var(--b1);padding:20px 0;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:10}
+.main{margin-left:210px;flex:1;padding:24px 28px;min-height:100vh}
+.mob-bar{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg1);border-top:1px solid var(--b1);z-index:20;padding:6px 0 max(6px,env(safe-area-inset-bottom))}
+.mob-btn{display:none;position:fixed;top:14px;left:14px;z-index:15;background:var(--bg1);border:1px solid var(--b1);border-radius:8px;padding:8px 12px;color:var(--t0);font-size:1.1rem;cursor:pointer}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9}
+@media(max-width:768px){
+.sidebar{transform:translateX(-100%);transition:transform 0.3s ease;z-index:20}
+.sidebar.open{transform:translateX(0)}
+.sidebar-overlay.open{display:block;z-index:19}
+.main{margin-left:0;padding:16px 12px;padding-bottom:80px;padding-top:56px}
+.mob-bar{display:flex;justify-content:space-around;align-items:center}
+.mob-btn{display:block}
+}
+</style>
 </head>
 <body>
-    <div id="root"></div>
-    <script type="text/babel">
-        const { useState, useEffect, useCallback, useMemo } = React;
-        const uid = () => "_" + Math.random().toString(36).slice(2, 8);
-        const fmtD = d => d.toISOString().split("T")[0];
-        const todayS = () => fmtD(new Date());
-        const DOWS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"];
-        const KEY = "life-dashboard";
+<div id="root"></div>
+<script type="text/babel">
+const{useState,useEffect,useCallback}=React;
+const uid=()=>"_"+Math.random().toString(36).slice(2,8);
+const fmtD=d=>d.toISOString().split("T")[0];
+const todayS=()=>fmtD(new Date());
+const DOWS=["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
+const KEY="life-dashboard";
+/* Migrate from old versioned keys */
+(()=>{if(!localStorage.getItem("life-dashboard")){for(const k of["life-dashboard-v6","life-dashboard-v5","life-dashboard-v4"]){const d=localStorage.getItem(k);if(d){localStorage.setItem("life-dashboard",d);break}}}})();
 
-        const C = { bg0: "#08080a", bg1: "#0e0e12", bg2: "#141418", bg3: "#1a1a20", bg4: "#222228", b1: "#1e1e24", t0: "#f4f4f6", t1: "#c8c8d0", t2: "#8888a0", t3: "#55556a", lime: "#b8f000", blue: "#5b9df5", orange: "#f5a623", red: "#f55353", green: "#34d399", purple: "#a78bfa", cyan: "#22d3ee", pink: "#f472b6" };
-        
-        const z = {
-            card: { background: C.bg1, border: `1px solid ${C.b1}`, borderRadius: 14, padding: "16px", marginBottom: 14 },
-            lb: { fontSize: "0.6rem", textTransform: "uppercase", letterSpacing: 2, color: C.t3, fontWeight: 600, marginBottom: 8 },
-            big: { fontFamily: "'IBM Plex Mono',monospace", fontSize: "1.6rem", fontWeight: 700, lineHeight: 1 },
-            btn: p => ({ padding: "8px 16px", borderRadius: 8, border: p ? "none" : `1px solid ${C.b1}`, fontWeight: 600, fontSize: "0.78rem", cursor: "pointer", fontFamily: "inherit", background: p ? C.lime : C.bg2, color: p ? C.bg0 : C.t1, whiteSpace: "nowrap" }),
-            btnS: p => ({ padding: "5px 11px", borderRadius: 6, border: p ? "none" : `1px solid ${C.b1}`, fontWeight: 600, fontSize: "0.7rem", cursor: "pointer", fontFamily: "inherit", background: p ? C.lime : C.bg2, color: p ? C.bg0 : C.t2 }),
-            btnD: { padding: "5px 11px", borderRadius: 6, border: "1px solid #f5535333", fontWeight: 600, fontSize: "0.7rem", cursor: "pointer", fontFamily: "inherit", background: "transparent", color: C.red },
-            inp: { width: "100%", padding: "9px 14px", borderRadius: 8, border: `1px solid ${C.b1}`, background: C.bg0, color: C.t0, fontSize: "0.82rem", fontFamily: "inherit", outline: "none" },
-            inpM: { width: "100%", padding: "8px 12px", borderRadius: 8, border: `1px solid ${C.b1}`, background: C.bg0, color: C.t0, fontSize: "0.8rem", fontFamily: "'IBM Plex Mono',monospace", outline: "none" },
-            tag: c => ({ fontSize: "0.6rem", padding: "3px 8px", borderRadius: 100, fontWeight: 600, background: c + "18", color: c, display: "inline-block" }),
-            th: { fontSize: "0.52rem", textTransform: "uppercase", letterSpacing: 1.5, color: C.t3, fontWeight: 600, padding: "6px 4px", textAlign: "left", borderBottom: `1px solid ${C.b1}` },
-            td: { padding: "6px 4px", fontSize: "0.76rem", borderBottom: `1px solid ${C.b1}` }
-        };
+/* === DEFAULTS === */
+const DEF_DT=[
+{id:"dt1",name:"Descanso",emoji:"😴",color:"#a78bfa",cal:2250,prot:170,carbs:220,fat:65,sugar:40,calMin:2250,calMax:2350},
+{id:"dt2",name:"Pesas",emoji:"🏋️",color:"#b8f000",cal:2250,prot:180,carbs:260,fat:65,sugar:40,calMin:2250,calMax:2350},
+{id:"dt3",name:"Tenis/Padel",emoji:"🎾",color:"#5b9df5",cal:2250,prot:170,carbs:260,fat:65,sugar:40,calMin:2250,calMax:2350},
+{id:"dt4",name:"Golf",emoji:"⛳",color:"#34d399",cal:2250,prot:160,carbs:240,fat:65,sugar:40,calMin:2250,calMax:2350},
+{id:"dt5",name:"Pesas+Tenis/Padel",emoji:"💪🎾",color:"#22d3ee",cal:2500,prot:180,carbs:280,fat:70,sugar:40,calMin:2500,calMax:2600},
+{id:"dt6",name:"Pesas+Golf",emoji:"💪⛳",color:"#f5a623",cal:2750,prot:180,carbs:300,fat:70,sugar:40,calMin:2750,calMax:2850}];
 
-        /* === COMPONENTES GLOBALES (FUERA DE LAS PÁGINAS PARA EVITAR PÉRDIDA DE FOCO) === */
+const DEF_S={planName:"Mini-Cut 6 Semanas",planGoal:"20% → 15% Body Fat",startWeight:73.7,goalWeight:71.0,startWaist:87.5,cutWeeks:6,startDate:"2026-02-01",trainingPerWeek:5,protRange:[153,999],fatRange:[0,75],carbRange:[0,999],sugarRange:[0,40]};
 
-        const Mdl = ({ title, ch, onClose, wide }) => (
-            <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)", padding: 12 }} onClick={onClose}>
-                <div style={{ background: C.bg1, border: `1px solid ${C.b1}`, borderRadius: 16, padding: "20px", width: "100%", maxWidth: wide ? 720 : 540, maxHeight: "90vh", overflowY: "auto" }} onClick={e => e.stopPropagation()}>
-                    <div style={{ fontSize: "1rem", fontWeight: 700, marginBottom: 16 }}>{title}</div>
-                    {ch}
-                </div>
-            </div>
-        );
+const DEF_HAB=[
+{id:"h1",name:"Gym / Pesas",emoji:"💪",meta:"5x/semana",active:true},
+{id:"h2",name:"Lectura",emoji:"📖",meta:"30 min/día",active:true},
+{id:"h3",name:"Pádel / Tenis",emoji:"🎾",meta:"2x/semana",active:true},
+{id:"h4",name:"Estudiar",emoji:"🧠",meta:"1 hora/día",active:true},
+{id:"h5",name:"Agua 3L",emoji:"💧",meta:"Diario",active:true},
+{id:"h6",name:"Dormir 7h+",emoji:"😴",meta:"Diario",active:true}];
 
-        const G2 = ({ children }) => (<div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>{children}</div>);
-        const G3 = ({ children }) => (<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: 10 }}>{children}</div>);
+const DEF_PROJ=[
+{id:"p1",name:"Asorsalud Web",status:"En progreso",progress:72,priority:"Alta",category:"Web Dev",deadline:"2026-03-15",notes:"Rediseño web $22M COP",tasks:[{id:uid(),t:"Análisis sitio actual",s:"done",note:""},{id:uid(),t:"Propuesta ejecutiva",s:"done",note:""},{id:uid(),t:"Fotografía profesional",s:"pending",note:"Contactar fotógrafo"},{id:uid(),t:"Desarrollo frontend",s:"pending",note:""},{id:uid(),t:"Integración sistemas",s:"pending",note:""},{id:uid(),t:"Testing y lanzamiento",s:"pending",note:""}]},
+{id:"p2",name:"Canchas de Pádel",status:"En progreso",progress:55,priority:"Alta",category:"Inversión",deadline:"2026-04-01",notes:"8 canchas, $250K inversión",tasks:[{id:uid(),t:"Modelo DCF + escenarios",s:"done",note:""},{id:uid(),t:"Análisis de sensibilidad",s:"done",note:""},{id:uid(),t:"Pitch deck inversionistas",s:"pending",note:"Preparar para marzo"},{id:uid(),t:"Validación de mercado",s:"pending",note:""},{id:uid(),t:"Búsqueda de ubicación",s:"pending",note:""},{id:uid(),t:"Plan operativo",s:"pending",note:""}]}];
 
-        /* Modales de Fitness */
-        const FlModal = ({ idx, ex, dayTypes, dayN, sv, D, onClose }) => {
-            const [f, setF] = useState(ex || { date: todayS(), week: `S${Math.ceil(dayN / 7)}`, dayType: "dt2", weight: "", waist: "", cal: "", prot: "", fat: "", carbs: "", sugar: "", steps: "", sleep: "", notes: "" });
-            const dt = dayTypes.find(t => t.id === f.dayType) || dayTypes[0];
-            const submit = () => {
-                const log = [...D.fitnessLog];
-                if (idx !== null) log[idx] = { ...f };
-                else log.push({ ...f });
-                log.sort((a, b) => a.date.localeCompare(b.date));
-                sv({ ...D, fitnessLog: log });
-                onClose();
-            };
-            return (
-                <Mdl title={idx !== null ? "Editar Registro" : "📊 Nuevo Registro"} onClose={onClose} wide ch={
-                    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                        <G3>
-                            <div><div style={z.lb}>Fecha</div><input type="date" style={z.inpM} value={f.date} onChange={e => setF({ ...f, date: e.target.value })} /></div>
-                            <div><div style={z.lb}>Tipo Día</div>
-                                <select style={z.inpM} value={f.dayType} onChange={e => setF({ ...f, dayType: e.target.value })}>
-                                    {dayTypes.map(t => <option key={t.id} value={t.id}>{t.emoji} {t.name}</option>)}
-                                </select>
-                            </div>
-                            <div><div style={z.lb}>Peso (kg)</div><input type="number" step="0.1" style={z.inpM} value={f.weight} onChange={e => setF({ ...f, weight: e.target.value })} /></div>
-                        </G3>
-                        <G3>
-                            <div><div style={z.lb}>Calorías</div><input type="number" style={z.inpM} value={f.cal} onChange={e => setF({ ...f, cal: e.target.value })} /></div>
-                            <div><div style={z.lb}>Prot (g)</div><input type="number" style={z.inpM} value={f.prot} onChange={e => setF({ ...f, prot: e.target.value })} /></div>
-                            <div><div style={z.lb}>Carbs (g)</div><input type="number" style={z.inpM} value={f.carbs} onChange={e => setF({ ...f, carbs: e.target.value })} /></div>
-                            <div><div style={z.lb}>Grasas (g)</div><input type="number" style={z.inpM} value={f.fat} onChange={e => setF({ ...f, fat: e.target.value })} /></div>
-                        </G3>
-                        <div style={{ padding: 10, background: C.bg2, borderRadius: 8, fontSize: "0.7rem", color: C.t2 }}>
-                            Objetivo {dt.name}: {dt.cal} kcal | {dt.prot}P {dt.carbs}C {dt.fat}G
-                        </div>
-                        <div style={{ display: "flex", gap: 8 }}>
-                            <button style={z.btn(true)} onClick={submit}>Guardar</button>
-                            <button style={z.btn(false)} onClick={onClose}>Cancelar</button>
-                        </div>
-                    </div>
-                } />
-            );
-        };
+const DEF_BOOKS=[
+{id:"b1",title:"Atomic Habits",author:"James Clear",status:"reading",progress:65,genre:"Productividad",rating:5,startDate:"2026-01-10",notes:"Excelente para hábitos"},
+{id:"b2",title:"The Lean Startup",author:"Eric Ries",status:"reading",progress:30,genre:"Negocios",rating:4,startDate:"2026-01-25",notes:"Aplica para canchas de pádel"},
+{id:"b3",title:"Deep Work",author:"Cal Newport",status:"queue",progress:0,genre:"Productividad",rating:0,startDate:"",notes:""},
+{id:"b4",title:"$100M Offers",author:"Alex Hormozi",status:"queue",progress:0,genre:"Negocios",rating:0,startDate:"",notes:""},
+{id:"b5",title:"Meditations",author:"Marcus Aurelius",status:"queue",progress:0,genre:"Filosofía",rating:0,startDate:"",notes:""}];
 
-        /* Modal de Proyectos */
-        const ProjEdit = ({ ex, idx, projects, sv, D, onClose }) => {
-            const [f, setF] = useState({ ...ex });
-            const save = () => {
-                const p = [...projects];
-                p[idx] = f;
-                sv({ ...D, projects: p });
-                onClose();
-            };
-            return (
-                <Mdl title="✏️ Editar Proyecto" onClose={onClose} ch={
-                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-                        <div><div style={z.lb}>Nombre</div><input style={z.inp} value={f.name} onChange={e => setF({ ...f, name: e.target.value })} /></div>
-                        <G2>
-                            <div><div style={z.lb}>Status</div>
-                                <select style={z.inpM} value={f.status} onChange={e => setF({ ...f, status: e.target.value })}>
-                                    <option>En progreso</option><option>Pausado</option><option>Completado</option>
-                                </select>
-                            </div>
-                            <div><div style={z.lb}>Progreso %</div><input type="number" style={z.inpM} value={f.progress} onChange={e => setF({ ...f, progress: e.target.value })} /></div>
-                        </G2>
-                        <button style={z.btn(true)} onClick={save}>Guardar Cambios</button>
-                    </div>
-                } />
-            );
-        };
+const DEF_RL=[{id:uid(),date:"2026-02-07",book:"Atomic Habits",pages:15,minutes:30,notes:"Identity-based habits"},{id:uid(),date:"2026-02-06",book:"The Lean Startup",pages:20,minutes:35,notes:"MVP y Build-Measure-Learn"},{id:uid(),date:"2026-02-05",book:"Atomic Habits",pages:12,minutes:25,notes:"Habit stacking"}];
 
-        /* === DEFAULTS & LOGIC === */
-        const DEF_S = { planName: "Mini-Cut 6 Semanas", startDate: "2026-02-01", cutWeeks: 6, startWeight: 73.7, goalWeight: 71.0, trainingPerWeek: 5 };
-        const DEF_DT = [
-            { id: "dt1", name: "Descanso", emoji: "😴", cal: 2250, prot: 170, carbs: 220, fat: 65 },
-            { id: "dt2", name: "Pesas", emoji: "🏋️", cal: 2350, prot: 180, carbs: 260, fat: 65 }
-        ];
+const DEF_HOR=[
+{hour:"6:00",slots:["","Gym 💪","","Gym 💪","","Gym 💪",""]},
+{hour:"7:00",slots:["Gym 💪","","Gym 💪","","Gym 💪","",""]},
+{hour:"8:00",slots:["","","","","","Pádel 🎾",""]},
+{hour:"9:00",slots:["Deep Work","Deep Work","Deep Work","Deep Work","Deep Work","",""]},
+{hour:"10:00",slots:["Deep Work","Deep Work","Deep Work","Deep Work","Deep Work","",""]},
+{hour:"11:00",slots:["Reuniones","","Reuniones","","Reuniones","",""]},
+{hour:"12:00",slots:["Almuerzo 🍽️","Almuerzo 🍽️","Almuerzo 🍽️","Almuerzo 🍽️","Almuerzo 🍽️","",""]},
+{hour:"14:00",slots:["Proyectos 💼","Proyectos 💼","Proyectos 💼","Proyectos 💼","Proyectos 💼","",""]},
+{hour:"16:00",slots:["Estudiar 📚","","Estudiar 📚","","Estudiar 📚","",""]},
+{hour:"17:00",slots:["","Tenis 🎾","","","","",""]},
+{hour:"19:00",slots:["Lectura 📖","Lectura 📖","Lectura 📖","Lectura 📖","Lectura 📖","",""]},
+{hour:"21:00",slots:["Descanso 😴","Descanso 😴","Descanso 😴","Descanso 😴","Descanso 😴","Libre ✨","Libre ✨"]}];
 
-        /* === APP PRINCIPAL === */
-        function App() {
-            const [D, setD] = useState(null);
-            const [pg, setPg] = useState("dashboard");
-            const [modal, setModal] = useState(null);
+const DEF_FL=[
+{date:"2026-02-01",week:"S1",dayType:"dt1",weight:73.7,waist:87.5,cal:2763,prot:172,fat:99,carbs:287,sugar:15,steps:12160,sleep:"",notes:""},
+{date:"2026-02-02",week:"S1",dayType:"dt2",weight:73.7,waist:87.5,cal:2553,prot:180,fat:55,carbs:319,sugar:7,steps:11459,sleep:"",notes:""},
+{date:"2026-02-03",week:"S1",dayType:"dt6",weight:73.7,waist:87.5,cal:2803,prot:187,fat:73,carbs:348,sugar:39,steps:20535,sleep:"",notes:""},
+{date:"2026-02-04",week:"S1",dayType:"dt2",weight:73.7,waist:87.5,cal:2330,prot:180,fat:76,carbs:242,sugar:40,steps:15150,sleep:"",notes:""},
+{date:"2026-02-05",week:"S1",dayType:"dt2",weight:73.2,waist:87.5,cal:2310,prot:175,fat:62,carbs:241,sugar:42,steps:10795,sleep:"",notes:""},
+{date:"2026-02-06",week:"S1",dayType:"dt2",weight:73.2,waist:87.5,cal:2331,prot:178,fat:84,carbs:217,sugar:30,steps:11380,sleep:"",notes:""},
+{date:"2026-02-07",week:"S1",dayType:"dt1",weight:73.0,waist:87.0,cal:2094,prot:184,fat:81,carbs:161,sugar:38,steps:9333,sleep:"",notes:""},
+{date:"2026-02-08",week:"S2",dayType:"dt1",weight:73.0,waist:87.0,cal:2368,prot:168,fat:125,carbs:140,sugar:10,steps:12000,sleep:"",notes:""},
+{date:"2026-02-09",week:"S2",dayType:"dt2",weight:72.5,waist:87.0,cal:0,prot:0,fat:0,carbs:0,sugar:0,steps:0,sleep:"",notes:""}];
 
-            useEffect(() => {
-                const s = localStorage.getItem(KEY);
-                if (s) setD(JSON.parse(s));
-                else setD({ settings: DEF_S, dayTypes: DEF_DT, fitnessLog: [], projects: [], habits: [], books: [], horario: [] });
-            }, []);
+const DEF_TT=[{id:"tt1",task:"Sesión de pesas — Upper body",cat:"Gym",done:false},{id:"tt2",task:"Revisar propuesta Asorsalud",cat:"Trabajo",done:false},{id:"tt3",task:"Llamada canchas de pádel",cat:"Trabajo",done:false},{id:"tt4",task:"Leer 30 min",cat:"Lectura",done:false},{id:"tt5",task:"Registrar macros del día",cat:"Fitness",done:false},{id:"tt6",task:"Estudiar 1 hora",cat:"Estudio",done:false}];
 
-            const sv = useCallback(nd => { setD(nd); localStorage.setItem(KEY, JSON.stringify(nd)); }, []);
+const DEF={settings:DEF_S,dayTypes:DEF_DT,habits:DEF_HAB,habitWeekly:{},projects:DEF_PROJ,books:DEF_BOOKS,readingLog:DEF_RL,horario:DEF_HOR,fitnessLog:DEF_FL,todayTasks:DEF_TT,journal:{}};
 
-            if (!D) return null;
+function App(){
+const[D,setD]=useState(null);const[ld,setLd]=useState(true);const[pg,setPg]=useState("dashboard");const[modal,setModal]=useState(null);const[sideOpen,setSideOpen]=useState(false);
+useEffect(()=>{try{const s=localStorage.getItem(KEY);if(s){const p=JSON.parse(s);
+/* Deep merge: user data wins, defaults only fill gaps */
+const merged={};for(const k of Object.keys(DEF)){
+if(p[k]===undefined||p[k]===null){merged[k]=DEF[k]}
+else if(k==="settings"){merged[k]={...DEF_S,...p[k]}}
+else if(k==="dayTypes"){merged[k]=p[k].map(t=>({...DEF_DT.find(d=>d.id===t.id)||{},...t}))}
+else{merged[k]=p[k]}
+}setD(merged)}else setD({...DEF})}catch{setD({...DEF})}setLd(false)},[]);
+const sv=useCallback(nd=>{setD(nd);try{localStorage.setItem(KEY,JSON.stringify(nd))}catch{}},[]);
+const go=p=>{setPg(p);setSideOpen(false)};
 
-            const dayN = Math.max(1, Math.floor((new Date() - new Date(D.settings.startDate)) / 86400000) + 1);
+const S=D?.settings||DEF_S;const dayTypes=D?.dayTypes||DEF_DT;const fl=D?.fitnessLog||[];const habits=D?.habits||DEF_HAB;const projects=D?.projects||DEF_PROJ;const books=D?.books||DEF_BOOKS;const readingLog=D?.readingLog||[];const horario=D?.horario||DEF_HOR;const journal=D?.journal||{};const hw=D?.habitWeekly||{};
 
-            return (
-                <div style={{ display: "flex" }}>
-                    {/* Sidebar */}
-                    <div className="sidebar">
-                        <div style={{ padding: "0 20px 20px", fontSize: "1.1rem", fontWeight: 800, color: C.lime }}>FITNESS OS</div>
-                        {["dashboard", "fitness", "projects", "habits", "horario", "lectura"].map(id => (
-                            <div key={id} onClick={() => setPg(id)} style={{ padding: "10px 20px", cursor: "pointer", color: pg === id ? C.lime : C.t2, background: pg === id ? C.lime + "10" : "transparent" }}>
-                                {id.toUpperCase()}
-                            </div>
-                        ))}
-                    </div>
+const getDT=id=>dayTypes.find(t=>t.id===id)||dayTypes[0];
+/* Compliance: P,G,C,S use global intervals; K (cal) uses per-day-type calMin/calMax */
+const chkComp=(e)=>{
+  const pr=S.protRange||[153,999],fr=S.fatRange||[0,75],cr=S.carbRange||[0,999],sr=S.sugarRange||[0,40];
+  const dt=getDT(e.dayType);
+  const p=(+e.prot||0)>=pr[0]&&(+e.prot||0)<=pr[1]?1:0;
+  const g=(+e.fat||0)>=fr[0]&&(+e.fat||0)<=fr[1]?1:0;
+  const c=(+e.carbs||0)>=cr[0]&&(+e.carbs||0)<=cr[1]?1:0;
+  const su=(+e.sugar||0)>=sr[0]&&(+e.sugar||0)<=sr[1]?1:0;
+  const k=(+e.cal||0)>=(dt.calMin||0)&&(+e.cal||0)<=(dt.calMax||99999)?1:0;
+  return{p,g,c,s:su,k,day:p+g+c+su>=3?1:0};
+};
 
-                    {/* Main Content */}
-                    <div className="main">
-                        {pg === "dashboard" && <Dashboard D={D} dayN={dayN} />}
-                        {pg === "fitness" && <Fitness D={D} sv={sv} dayN={dayN} setModal={setModal} />}
-                        {pg === "projects" && <Projects D={D} sv={sv} setModal={setModal} />}
-                        {pg === "habits" && <div>Página de Hábitos</div>}
-                        
-                        {/* Renderizado de Modales */}
-                        {modal?.type === "fit" && <FlModal idx={modal.idx} ex={modal.ex} dayTypes={D.dayTypes} dayN={dayN} sv={sv} D={D} onClose={() => setModal(null)} />}
-                        {modal?.type === "proj" && <ProjEdit idx={modal.idx} ex={modal.ex} projects={D.projects} sv={sv} D={D} onClose={() => setModal(null)} />}
-                    </div>
-                </div>
-            );
-        }
+const latest=fl.length>0?fl[fl.length-1]:{weight:S.startWeight,waist:S.startWaist};
+const curW=+(latest.weight||S.startWeight);const curWaist=+(latest.waist||S.startWaist);const wLost=(S.startWeight-curW).toFixed(1);
+const dayN=Math.max(1,Math.floor((new Date()-new Date(S.startDate))/86400000)+1);const totalDays=S.cutWeeks*7;const prog=Math.min(100,Math.round(dayN/totalDays*100));
+const avg=(arr,k)=>arr.length>0?(arr.reduce((a,x)=>a+(+x[k]||0),0)/arr.length).toFixed(0):0;
+const movAvg=(arr,k,w=7)=>{if(arr.length<2)return[];return arr.map((_,i)=>{const st=Math.max(0,i-w+1);const sl=arr.slice(st,i+1).filter(x=>+x[k]>0);const a=sl.length>0?sl.reduce((a,x)=>a+(+x[k]||0),0)/sl.length:0;return{date:arr[i].date,v:+a.toFixed(1),label:arr[i].date.slice(5)}})};
+const getWk=()=>{const wk=[];const now=new Date();const dow=now.getDay();const sow=new Date(now);sow.setDate(now.getDate()-(dow===0?6:dow-1));for(let i=0;i<7;i++){const d=new Date(sow);d.setDate(sow.getDate()+i);wk.push(fmtD(d))}return wk};
 
-        const Dashboard = ({ D, dayN }) => (
-            <div style={{ animation: "fadeIn 0.4s ease" }}>
-                <h2 style={{ marginBottom: 20 }}>Día {dayN} de {D.settings.cutWeeks * 7}</h2>
-                <G3>
-                    <div style={z.card}><div style={z.lb}>Plan</div><div style={z.big}>{D.settings.planName}</div></div>
-                    <div style={z.card}><div style={z.lb}>Peso Inicial</div><div style={z.big}>{D.settings.startWeight} kg</div></div>
-                </G3>
-            </div>
-        );
+const C={bg0:"#08080a",bg1:"#0e0e12",bg2:"#141418",bg3:"#1a1a20",bg4:"#222228",b1:"#1e1e24",t0:"#f4f4f6",t1:"#c8c8d0",t2:"#8888a0",t3:"#55556a",lime:"#b8f000",blue:"#5b9df5",orange:"#f5a623",red:"#f55353",green:"#34d399",purple:"#a78bfa",cyan:"#22d3ee",pink:"#f472b6"};
+const z={
+card:{background:C.bg1,border:`1px solid ${C.b1}`,borderRadius:14,padding:"16px",marginBottom:14},
+lb:{fontSize:"0.6rem",textTransform:"uppercase",letterSpacing:2,color:C.t3,fontWeight:600,marginBottom:8},
+big:{fontFamily:"'IBM Plex Mono',monospace",fontSize:"1.6rem",fontWeight:700,lineHeight:1},
+btn:p=>({padding:"8px 16px",borderRadius:8,border:p?"none":`1px solid ${C.b1}`,fontWeight:600,fontSize:"0.78rem",cursor:"pointer",fontFamily:"inherit",background:p?C.lime:C.bg2,color:p?C.bg0:C.t1,whiteSpace:"nowrap"}),
+btnS:p=>({padding:"5px 11px",borderRadius:6,border:p?"none":`1px solid ${C.b1}`,fontWeight:600,fontSize:"0.7rem",cursor:"pointer",fontFamily:"inherit",background:p?C.lime:C.bg2,color:p?C.bg0:C.t2}),
+btnD:{padding:"5px 11px",borderRadius:6,border:"1px solid #f5535333",fontWeight:600,fontSize:"0.7rem",cursor:"pointer",fontFamily:"inherit",background:"transparent",color:C.red},
+inp:{width:"100%",padding:"9px 14px",borderRadius:8,border:`1px solid ${C.b1}`,background:C.bg0,color:C.t0,fontSize:"0.82rem",fontFamily:"inherit",outline:"none"},
+inpM:{width:"100%",padding:"8px 12px",borderRadius:8,border:`1px solid ${C.b1}`,background:C.bg0,color:C.t0,fontSize:"0.8rem",fontFamily:"'IBM Plex Mono',monospace",outline:"none"},
+tag:c=>({fontSize:"0.6rem",padding:"3px 8px",borderRadius:100,fontWeight:600,background:c+"18",color:c,display:"inline-block"}),
+delta:c=>({display:"inline-flex",alignItems:"center",gap:3,fontSize:"0.65rem",fontWeight:600,padding:"2px 8px",borderRadius:5,marginTop:5,color:c,background:c+"15"}),
+th:{fontSize:"0.52rem",textTransform:"uppercase",letterSpacing:1.5,color:C.t3,fontWeight:600,padding:"6px 4px",textAlign:"left",borderBottom:`1px solid ${C.b1}`},
+td:{padding:"6px 4px",fontSize:"0.76rem",borderBottom:`1px solid ${C.b1}`},
+navI:a=>({display:"flex",alignItems:"center",gap:10,padding:"8px 12px",borderRadius:8,cursor:"pointer",fontSize:"0.8rem",color:a?C.lime:C.t2,background:a?C.lime+"12":"transparent",border:a?`1px solid ${C.lime}20`:"1px solid transparent",fontWeight:500,marginBottom:2})};
 
-        const Fitness = ({ D, setModal }) => (
-            <div>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 20 }}>
-                    <h2>Fitness Log</h2>
-                    <button style={z.btn(true)} onClick={() => setModal({ type: "fit", idx: null })}>+ Registro</button>
-                </div>
-                <div style={z.card}>
-                    <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                        <thead>
-                            <tr>
-                                <th style={z.th}>Fecha</th>
-                                <th style={z.th}>Tipo</th>
-                                <th style={z.th}>Peso</th>
-                                <th style={z.th}>Cal</th>
-                                <th style={z.th}>Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {D.fitnessLog.map((e, i) => (
-                                <tr key={i}>
-                                    <td style={z.td}>{e.date}</td>
-                                    <td style={z.td}>{e.dayType}</td>
-                                    <td style={z.td}>{e.weight} kg</td>
-                                    <td style={z.td}>{e.cal}</td>
-                                    <td style={z.td}><button style={z.btnS(false)} onClick={() => setModal({ type: "fit", idx: i, ex: e })}>Editar</button></td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        );
+const Mdl=({title,ch,onClose,wide})=>(<div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.65)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",backdropFilter:"blur(4px)",padding:12}} onClick={onClose}><div style={{background:C.bg1,border:`1px solid ${C.b1}`,borderRadius:16,padding:"20px",width:"100%",maxWidth:wide?720:540,maxHeight:"90vh",overflowY:"auto"}} onClick={e=>e.stopPropagation()}><div style={{fontSize:"1rem",fontWeight:700,marginBottom:16}}>{title}</div>{ch}</div></div>);
 
-        const Projects = ({ D, setModal }) => (
-            <G2>
-                {D.projects.map((p, i) => (
-                    <div key={i} style={z.card}>
-                        <div style={{ display: "flex", justifyContent: "space-between" }}>
-                            <h3>{p.name}</h3>
-                            <button style={z.btnS(false)} onClick={() => setModal({ type: "proj", idx: i, ex: p })}>✏️</button>
-                        </div>
-                        <div style={{ marginTop: 10, height: 6, background: C.bg3, borderRadius: 3 }}>
-                            <div style={{ height: "100%", width: `${p.progress}%`, background: C.lime, borderRadius: 3 }} />
-                        </div>
-                        <p style={{ fontSize: "0.7rem", marginTop: 5, color: C.t2 }}>{p.status} — {p.progress}%</p>
-                    </div>
-                ))}
-            </G2>
-        );
+const Chart=({pts,h=130,color=C.lime,pts2,color2})=>{if(pts.length<2)return<div style={{textAlign:"center",padding:20,color:C.t3,fontSize:"0.78rem"}}>2+ datos</div>;const last=pts.slice(-14),vals=last.map(p=>p.v);let allV=[...vals];if(pts2)allV=[...allV,...pts2.slice(-14).map(p=>p.v)];const mn=Math.min(...allV)-0.3,mx=Math.max(...allV)+0.3,rng=mx-mn||1;const W=520,pL=42,pR=12,pT=10,pB=22,cW=W-pL-pR,cH=h-pT-pB;const pp=last.map((p,i)=>({x:pL+(i/(last.length-1))*cW,y:pT+(1-(p.v-mn)/rng)*cH,...p}));const poly=pp.map(p=>`${p.x},${p.y}`).join(" ");const area=`M${pp[0].x},${pp[0].y} ${pp.map(p=>`L${p.x},${p.y}`).join(" ")} L${pp[pp.length-1].x},${pT+cH} L${pp[0].x},${pT+cH} Z`;let pp2=[],poly2="";if(pts2&&pts2.length>=2){const l2=pts2.slice(-14);pp2=l2.map((p,i)=>({x:pL+(i/(l2.length-1))*cW,y:pT+(1-(p.v-mn)/rng)*cH}));poly2=pp2.map(p=>`${p.x},${p.y}`).join(" ")}return(<svg viewBox={`0 0 ${W} ${h}`} style={{width:"100%",height:"auto"}}>{[0,1,2,3].map(i=><line key={i} x1={pL} y1={pT+(i/3)*cH} x2={W-pR} y2={pT+(i/3)*cH} stroke="#f4f4f608" strokeWidth="1"/>)}{[0,3].map(i=><text key={i} x={2} y={pT+(i/3)*cH+3} fill={C.t3} fontSize="8" fontFamily="monospace">{(mx-(i/3)*rng).toFixed(1)}</text>)}<defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor={color} stopOpacity="0.12"/><stop offset="100%" stopColor={color} stopOpacity="0"/></linearGradient></defs><path d={area} fill="url(#cg)"/><polyline points={poly} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>{pp.map((p,i)=><circle key={i} cx={p.x} cy={p.y} r="3" fill={C.bg0} stroke={color} strokeWidth="2"/>)}{poly2&&<polyline points={poly2} fill="none" stroke={color2||C.orange} strokeWidth="2" strokeDasharray="6,3" strokeLinecap="round"/>}{pp.filter((_,i)=>i%Math.max(1,Math.floor(pp.length/6))===0||i===pp.length-1).map((p,i)=><text key={`l${i}`} x={p.x} y={pT+cH+16} fill={C.t3} fontSize="7" fontFamily="monospace" textAnchor="middle">{p.label}</text>)}</svg>)};
+const G2=({children})=>(<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>{children}</div>);
+const G3=({children})=>(<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))",gap:10}}>{children}</div>);
 
-        const root = ReactDOM.createRoot(document.getElementById("root"));
-        root.render(<App />);
-    </script>
+/* === FITNESS === */
+const FitnessPage=()=>{
+const[flM,setFlM]=useState(null);const[compM,setCompM]=useState(false);
+const wPts=fl.filter(e=>e.weight).map(e=>({v:+e.weight,label:e.date.slice(5)}));const wAvg=movAvg(fl.filter(e=>e.weight),"weight");
+
+const FlModal=({idx,onClose})=>{
+const ex=idx!==null?fl[idx]:null;
+const[f,setF]=useState(ex||{date:todayS(),week:`S${Math.ceil(dayN/7)}`,dayType:"dt2",weight:"",waist:"",cal:"",prot:"",fat:"",carbs:"",sugar:"",steps:"",sleep:"",notes:""});
+const dt=getDT(f.dayType);
+const submit=()=>{const log=[...fl];if(idx!==null)log[idx]={...f};else log.push({...f});log.sort((a,b)=>a.date.localeCompare(b.date));sv({...D,fitnessLog:log});onClose()};
+return(<Mdl title={idx!==null?"Editar Registro":"📊 Nuevo Registro"} onClose={onClose} wide ch={<div>
+<G3><div><div style={{...z.lb,marginBottom:4}}>Fecha</div><input style={z.inpM} type="date" value={f.date} onChange={e=>setF({...f,date:e.target.value})}/></div>
+<div><div style={{...z.lb,marginBottom:4}}>Semana</div><input style={z.inpM} value={f.week} onChange={e=>setF({...f,week:e.target.value})}/></div>
+<div><div style={{...z.lb,marginBottom:4}}>Tipo</div><select style={{...z.inpM,cursor:"pointer"}} value={f.dayType} onChange={e=>setF({...f,dayType:e.target.value})}>{dayTypes.map(t=><option key={t.id} value={t.id}>{t.emoji} {t.name}</option>)}</select></div></G3>
+<div style={{marginTop:10}}><G2><div><div style={{...z.lb,marginBottom:4}}>Peso (kg)</div><input style={z.inpM} type="number" step="0.1" value={f.weight} onChange={e=>setF({...f,weight:e.target.value})}/></div>
+<div><div style={{...z.lb,marginBottom:4}}>Cintura (cm)</div><input style={z.inpM} type="number" step="0.5" value={f.waist} onChange={e=>setF({...f,waist:e.target.value})}/></div></G2></div>
+<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(80px,1fr))",gap:8,marginTop:10}}>
+{[["Cal","cal",C.orange],["Prot","prot",C.blue],["Grasa","fat",C.red],["Carbos","carbs",C.green],["Azúcar","sugar",C.pink]].map(([l,k,c])=><div key={k}><div style={{...z.lb,marginBottom:4,color:c}}>{l}</div><input style={z.inpM} type="number" value={f[k]} onChange={e=>setF({...f,[k]:e.target.value})}/></div>)}</div>
+<div style={{marginTop:10}}><G2><div><div style={{...z.lb,marginBottom:4}}>Pasos</div><input style={z.inpM} type="number" value={f.steps} onChange={e=>setF({...f,steps:e.target.value})}/></div>
+<div><div style={{...z.lb,marginBottom:4}}>Sueño</div><input style={z.inpM} type="number" step="0.5" value={f.sleep} onChange={e=>setF({...f,sleep:e.target.value})}/></div></G2></div>
+<div style={{marginTop:10}}><div style={{...z.lb,marginBottom:4}}>Notas del día</div><textarea style={{...z.inp,minHeight:55}} value={f.notes||""} onChange={e=>setF({...f,notes:e.target.value})} placeholder="¿Cómo fue tu día?"/></div>
+<div style={{padding:"10px 12px",background:C.bg2,borderRadius:8,margin:"10px 0",fontSize:"0.72rem",color:C.t2}}><b style={{color:C.t1}}>{dt.emoji} {dt.name}:</b> {dt.cal} kcal · {dt.prot}g P · {dt.carbs}g C · {dt.fat}g G · ≤{dt.sugar}g S · Rango cal: {dt.calMin}–{dt.calMax}</div>
+<div style={{display:"flex",gap:8,flexWrap:"wrap"}}><button style={z.btn(true)} onClick={submit}>{idx!==null?"Guardar":"Registrar"}</button><button style={z.btn(false)} onClick={onClose}>Cancelar</button>{idx!==null&&<button style={z.btnD} onClick={()=>{const l=[...fl];l.splice(idx,1);sv({...D,fitnessLog:l});onClose()}}>Eliminar</button>}</div>
+</div>}/>)};
+
+const CompEditor=({onClose})=>{
+const[f,setF]=useState({protRange:[...(S.protRange||[153,999])],fatRange:[...(S.fatRange||[0,75])],carbRange:[...(S.carbRange||[0,999])],sugarRange:[...(S.sugarRange||[0,40])]});
+const[dtRanges,setDtRanges]=useState(dayTypes.map(t=>({id:t.id,name:t.name,emoji:t.emoji,calMin:t.calMin||0,calMax:t.calMax||9999})));
+const updDR=(i,k,v)=>{const n=[...dtRanges];n[i]={...n[i],[k]:+v};setDtRanges(n)};
+return(<Mdl title="⚙ Intervalos de Compliance" onClose={onClose} wide ch={<div>
+<p style={{fontSize:"0.76rem",color:C.t2,marginBottom:12}}>P✓ G✓ C✓ S✓ = valor dentro del intervalo. DÍA✓ = 3 de 4. K✓ = calorías dentro del rango del tipo de día.</p>
+{[["Proteína (P✓)","protRange",C.blue],["Grasas (G✓)","fatRange",C.red],["Carbos (C✓)","carbRange",C.green],["Azúcar (S✓)","sugarRange",C.pink]].map(([l,k,c])=>(<div key={k} style={{display:"flex",alignItems:"center",gap:8,marginBottom:10,flexWrap:"wrap"}}><span style={{width:120,fontSize:"0.78rem",color:c,fontWeight:600}}>{l}</span><span style={{fontSize:"0.7rem",color:C.t3}}>Min:</span><input style={{...z.inpM,maxWidth:75}} type="number" value={f[k][0]} onChange={e=>{const n=[...f[k]];n[0]=+e.target.value;setF({...f,[k]:n})}}/><span style={{fontSize:"0.7rem",color:C.t3}}>Max:</span><input style={{...z.inpM,maxWidth:75}} type="number" value={f[k][1]} onChange={e=>{const n=[...f[k]];n[1]=+e.target.value;setF({...f,[k]:n})}}/></div>))}
+<div style={{...z.lb,marginTop:14}}>🔥 Rango Calorías (K✓) por tipo de día</div>
+{dtRanges.map((dr,i)=>(<div key={dr.id} style={{display:"flex",alignItems:"center",gap:8,marginBottom:8,flexWrap:"wrap"}}><span style={{width:130,fontSize:"0.78rem",fontWeight:500}}>{dr.emoji} {dr.name}</span><span style={{fontSize:"0.7rem",color:C.t3}}>Min:</span><input style={{...z.inpM,maxWidth:80}} type="number" value={dr.calMin} onChange={e=>updDR(i,"calMin",e.target.value)}/><span style={{fontSize:"0.7rem",color:C.t3}}>Max:</span><input style={{...z.inpM,maxWidth:80}} type="number" value={dr.calMax} onChange={e=>updDR(i,"calMax",e.target.value)}/></div>))}
+<div style={{display:"flex",gap:8,marginTop:14}}><button style={z.btn(true)} onClick={()=>{const ndt=dayTypes.map(t=>{const r=dtRanges.find(d=>d.id===t.id);return r?{...t,calMin:r.calMin,calMax:r.calMax}:t});sv({...D,settings:{...S,...f},dayTypes:ndt});onClose()}}>Guardar</button><button style={z.btn(false)} onClick={onClose}>Cancelar</button></div>
+</div>}/>)};
+
+return(<div style={{animation:"fadeIn 0.3s ease-out"}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:8}}>
+<div><div style={{fontSize:"1.3rem",fontWeight:700}}>🏋️ Mini-Cut Tracker</div><div style={{fontSize:"0.75rem",color:C.t3}}>{S.planGoal}</div></div>
+<div style={{display:"flex",gap:6,flexWrap:"wrap"}}><button style={z.btn(true)} onClick={()=>setFlM("new")}>+ Registro</button><button style={z.btnS(false)} onClick={()=>setCompM(true)}>⚙ Intervalos</button></div></div>
+<G3>{[["🔥 Cal",getDT("dt2").cal,"kcal",C.orange],["🥩 Prot",getDT("dt2").prot+"g","g",C.blue],["🥑 Grasa",getDT("dt2").fat+"g","g",C.red],["🍚 Carbos",getDT("dt2").carbs+"g","g",C.green],["🍬 Azúcar","≤"+getDT("dt2").sugar+"g","g",C.pink],["💪 Entrenos",S.trainingPerWeek+"x","sem",C.lime]].map(([l,v,u,c],i)=><div key={i} style={z.card}><div style={{...z.lb,color:c}}>{l}</div><div style={{fontFamily:"monospace",fontSize:"1.1rem",fontWeight:700}}>{v}</div><div style={{fontSize:"0.6rem",color:C.t3}}>{u}</div></div>)}</G3>
+<div style={{...z.card,padding:"12px 16px",marginTop:4}}><div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{...z.lb,marginBottom:0}}>Progreso</span><span style={{fontFamily:"monospace",fontSize:"0.72rem",color:C.lime}}>Día {Math.min(dayN,totalDays)}/{totalDays} — {prog}%</span></div><div style={{width:"100%",height:7,background:C.bg3,borderRadius:100,overflow:"hidden"}}><div style={{height:"100%",borderRadius:100,width:`${prog}%`,background:`linear-gradient(90deg,${C.lime},#8aff00)`}}/></div></div>
+<G3><div style={z.card}><div style={z.lb}>Peso</div><div style={z.big}>{curW}</div><div style={{fontSize:"0.72rem",color:C.t2,marginTop:3}}>kg</div><div style={z.delta(C.green)}>↓ {wLost}</div></div>
+<div style={z.card}><div style={z.lb}>Cintura</div><div style={z.big}>{curWaist}</div><div style={{fontSize:"0.72rem",color:C.t2,marginTop:3}}>cm</div><div style={z.delta(C.green)}>↓ {(S.startWaist-curWaist).toFixed(1)}</div></div>
+<div style={z.card}><div style={z.lb}>Prom Cal</div><div style={z.big}>{avg(fl.filter(e=>+e.cal>0),"cal")}</div><div style={{fontSize:"0.72rem",color:C.t2,marginTop:3}}>kcal</div></div>
+<div style={z.card}><div style={z.lb}>Prom Pasos</div><div style={z.big}>{(+avg(fl.filter(e=>+e.steps>0),"steps")).toLocaleString()}</div><div style={{fontSize:"0.72rem",color:C.t2,marginTop:3}}>pasos</div></div></G3>
+<G2><div style={z.card}><div style={{display:"flex",justifyContent:"space-between"}}><div style={z.lb}>Peso</div><div style={{fontSize:"0.5rem",color:C.t3}}>— Real <span style={{color:C.orange}}>--- 7d</span></div></div><Chart pts={wPts} pts2={wAvg} color={C.lime} color2={C.orange}/></div>
+<div style={z.card}><div style={z.lb}>Cintura</div><Chart pts={fl.filter(e=>e.waist).map(e=>({v:+e.waist,label:e.date.slice(5)}))} color={C.cyan}/></div></G2>
+<div style={z.card}><div style={z.lb}>🎯 Macros por Tipo de Día</div><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:500}}><thead><tr>{["Tipo","Cal","Prot","Carbos","Grasa","Azúcar","Rango Cal"].map(h=><th key={h} style={z.th}>{h}</th>)}</tr></thead>
+<tbody>{dayTypes.map(t=>(<tr key={t.id}><td style={{...z.td,fontWeight:600}}>{t.emoji} {t.name}</td><td style={{...z.td,fontFamily:"monospace"}}>{t.cal}</td><td style={{...z.td,fontFamily:"monospace"}}>{t.prot}g</td><td style={{...z.td,fontFamily:"monospace"}}>{t.carbs}g</td><td style={{...z.td,fontFamily:"monospace"}}>{t.fat}g</td><td style={{...z.td,fontFamily:"monospace"}}>≤{t.sugar}g</td><td style={{...z.td,fontFamily:"monospace",color:C.orange}}>{t.calMin}–{t.calMax}</td></tr>))}</tbody></table></div></div>
+<div style={{...z.card,padding:"10px 16px",display:"flex",gap:12,flexWrap:"wrap",alignItems:"center"}}>
+<span style={{...z.lb,marginBottom:0}}>Intervalos:</span>
+{[["P✓",S.protRange||[153,999],C.blue],["G✓",S.fatRange||[0,75],C.red],["C✓",S.carbRange||[0,253],C.green],["S✓",S.sugarRange||[0,40],C.pink]].map(([l,r,c])=><span key={l} style={{fontSize:"0.68rem",color:c,fontWeight:600}}>{l}:{r[0]}–{r[1]}g</span>)}
+<span style={{fontSize:"0.68rem",color:C.orange,fontWeight:600}}>K✓: por tipo</span>
+<span style={{fontSize:"0.68rem",color:C.t3}}>DÍA✓=3/4</span></div>
+<div style={z.card}><div style={z.lb}>📊 Progreso Semanal</div><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:750}}>
+<thead><tr>{["Fecha","Tipo","Peso","Cintura","Cal","Prot","Grasa","Carbos","Azúcar","Pasos","P✓","G✓","C✓","S✓","K✓","DÍA"].map(h=><th key={h} style={{...z.th,padding:"5px 3px"}}>{h}</th>)}</tr></thead>
+<tbody>{fl.map((e,i)=>{const comp=chkComp(e);const dt=getDT(e.dayType);return(<tr key={i} style={{cursor:"pointer"}} onClick={()=>setFlM(i)}>
+<td style={{...z.td,fontFamily:"monospace",fontSize:"0.68rem"}}>{e.date.slice(5)}</td><td style={z.td}>{dt.emoji}</td>
+<td style={{...z.td,fontFamily:"monospace",fontWeight:600}}>{e.weight||"—"}</td><td style={{...z.td,fontFamily:"monospace"}}>{e.waist||"—"}</td>
+<td style={{...z.td,fontFamily:"monospace"}}>{e.cal||"—"}</td><td style={{...z.td,fontFamily:"monospace"}}>{e.prot||"—"}</td><td style={{...z.td,fontFamily:"monospace"}}>{e.fat||"—"}</td><td style={{...z.td,fontFamily:"monospace"}}>{e.carbs||"—"}</td><td style={{...z.td,fontFamily:"monospace"}}>{e.sugar||"—"}</td>
+<td style={{...z.td,fontFamily:"monospace"}}>{(+e.steps||0).toLocaleString()}</td>
+{[comp.p,comp.g,comp.c,comp.s,comp.k].map((v,j)=><td key={j} style={{...z.td,textAlign:"center"}}><span style={{color:v?C.green:C.red,fontWeight:700}}>{v?"✓":"✗"}</span></td>)}
+<td style={{...z.td,textAlign:"center"}}><span style={{color:comp.day?C.green:C.red,fontWeight:800,fontSize:"0.85rem"}}>{comp.day?"✓":"✗"}</span></td>
+</tr>)})}</tbody></table></div></div>
+{fl.filter(e=>e.notes).length>0&&<div style={z.card}><div style={z.lb}>📝 Notas</div>{fl.filter(e=>e.notes).slice(-5).reverse().map((e,i)=>(<div key={i} style={{padding:"7px 0",borderBottom:`1px solid ${C.b1}`}}><span style={{fontFamily:"monospace",fontSize:"0.65rem",color:C.t3}}>{e.date}</span> {getDT(e.dayType).emoji}<div style={{fontSize:"0.8rem",color:C.t1,marginTop:3}}>{e.notes}</div></div>))}</div>}
+{flM==="new"&&<FlModal idx={null} onClose={()=>setFlM(null)}/>}
+{typeof flM==="number"&&<FlModal idx={flM} onClose={()=>setFlM(null)}/>}
+{compM&&<CompEditor onClose={()=>setCompM(false)}/>}
+</div>)};
+
+/* === PROJECTS (task notes) === */
+const ProjectsPage=()=>{
+const[editP,setEditP]=useState(null);const[editT,setEditT]=useState(null);const[editTN,setEditTN]=useState(null);
+const addP=()=>{sv({...D,projects:[...projects,{id:uid(),name:"Nuevo Proyecto",status:"Por iniciar",progress:0,priority:"Media",category:"—",deadline:"",notes:"",tasks:[]}]})};
+const updP=(i,u)=>{const p=[...projects];p[i]={...p[i],...u};sv({...D,projects:p})};
+const delP=i=>{const p=[...projects];p.splice(i,1);sv({...D,projects:p})};
+const addT=pi=>{const p=[...projects];p[pi].tasks.push({id:uid(),t:"Nueva tarea",s:"pending",note:""});sv({...D,projects:p})};
+const updT=(pi,ti,u)=>{const p=[...projects];p[pi].tasks[ti]={...p[pi].tasks[ti],...u};p[pi].progress=p[pi].tasks.length>0?Math.round(p[pi].tasks.filter(t=>t.s==="done").length/p[pi].tasks.length*100):0;sv({...D,projects:p})};
+const delT=(pi,ti)=>{const p=[...projects];p[pi].tasks.splice(ti,1);p[pi].progress=p[pi].tasks.length>0?Math.round(p[pi].tasks.filter(t=>t.s==="done").length/p[pi].tasks.length*100):0;sv({...D,projects:p})};
+const moveT=(pi,ti,dir)=>{const p=[...projects];const t=p[pi].tasks;const ni=ti+dir;if(ni<0||ni>=t.length)return;[t[ti],t[ni]]=[t[ni],t[ti]];sv({...D,projects:p})};
+
+const ProjEdit=({idx,onClose})=>{const p=projects[idx];const[f,setF]=useState({...p});return(<Mdl title="✏️ Editar Proyecto" onClose={onClose} ch={<div style={{display:"flex",flexDirection:"column",gap:10}}>
+<div><div style={{...z.lb,marginBottom:4}}>Nombre</div><input style={z.inp} value={f.name} onChange={e=>setF({...f,name:e.target.value})}/></div>
+<G2><div><div style={{...z.lb,marginBottom:4}}>Status</div><select style={z.inpM} value={f.status} onChange={e=>setF({...f,status:e.target.value})}><option>Por iniciar</option><option>En progreso</option><option>Completado</option><option>Pausado</option></select></div><div><div style={{...z.lb,marginBottom:4}}>Prioridad</div><select style={z.inpM} value={f.priority} onChange={e=>setF({...f,priority:e.target.value})}><option>Alta</option><option>Media</option><option>Baja</option></select></div></G2>
+<G2><div><div style={{...z.lb,marginBottom:4}}>Categoría</div><input style={z.inp} value={f.category} onChange={e=>setF({...f,category:e.target.value})}/></div><div><div style={{...z.lb,marginBottom:4}}>Fecha Límite</div><input style={z.inpM} type="date" value={f.deadline} onChange={e=>setF({...f,deadline:e.target.value})}/></div></G2>
+<div><div style={{...z.lb,marginBottom:4}}>Notas</div><textarea style={{...z.inp,minHeight:50}} value={f.notes} onChange={e=>setF({...f,notes:e.target.value})}/></div>
+<div style={{display:"flex",gap:8}}><button style={z.btn(true)} onClick={()=>{updP(idx,f);onClose()}}>Guardar</button><button style={z.btn(false)} onClick={onClose}>Cancelar</button></div></div>}/>)};
+
+return(<div style={{animation:"fadeIn 0.3s ease-out"}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div style={{fontSize:"1.3rem",fontWeight:700}}>📂 Proyectos</div><button style={z.btn(true)} onClick={addP}>+ Proyecto</button></div>
+<G3>{projects.map((p,i)=>(<div key={p.id} style={z.card}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}><span style={{fontWeight:700,fontSize:"0.85rem"}}>{p.name}</span><div style={{display:"flex",gap:4}}><button style={z.btnS(false)} onClick={()=>setEditP(i)}>✏️</button><button style={z.btnD} onClick={()=>delP(i)}>✕</button></div></div><div style={{display:"flex",gap:5,marginBottom:8,flexWrap:"wrap"}}><span style={z.tag(p.status==="En progreso"?C.blue:p.status==="Completado"?C.green:C.orange)}>{p.status}</span><span style={z.tag(p.priority==="Alta"?C.red:C.orange)}>{p.priority}</span></div><div style={{width:"100%",height:6,background:C.bg3,borderRadius:100,overflow:"hidden"}}><div style={{height:"100%",borderRadius:100,width:`${p.progress}%`,background:C.lime}}/></div><div style={{fontSize:"0.63rem",color:C.t3,marginTop:3,textAlign:"right"}}>{p.progress}%</div></div>))}</G3>
+<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(300px,1fr))",gap:14,marginTop:14}}>{projects.map((p,pi)=>(<div key={p.id} style={z.card}><div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}><div style={z.lb}>📋 {p.name}</div><button style={z.btnS(true)} onClick={()=>addT(pi)}>+ Tarea</button></div>
+{p.tasks.map((t,ti)=>(<div key={t.id} style={{padding:"6px 0",borderBottom:`1px solid ${C.b1}`}}>
+<div style={{display:"flex",alignItems:"center",gap:6}}>
+<span style={{cursor:"pointer"}} onClick={()=>updT(pi,ti,{s:t.s==="done"?"pending":"done"})}>{t.s==="done"?"✅":"⏳"}</span>
+{editT===`${pi}-${ti}`?<input style={{...z.inp,flex:1,padding:"4px 8px",fontSize:"0.76rem"}} autoFocus value={t.t} onChange={e=>updT(pi,ti,{t:e.target.value})} onBlur={()=>setEditT(null)} onKeyDown={e=>e.key==="Enter"&&setEditT(null)}/>:<span style={{flex:1,fontSize:"0.78rem",textDecoration:t.s==="done"?"line-through":"none",color:t.s==="done"?C.t3:C.t0,cursor:"pointer"}} onClick={()=>setEditT(`${pi}-${ti}`)}>{t.t}</span>}
+<button style={{background:"none",border:"none",color:C.t3,cursor:"pointer",fontSize:"0.6rem"}} onClick={()=>setEditTN(editTN===`${pi}-${ti}`?null:`${pi}-${ti}`)}>📝</button>
+<button style={{background:"none",border:"none",color:C.t3,cursor:"pointer",fontSize:"0.6rem"}} onClick={()=>moveT(pi,ti,-1)}>↑</button>
+<button style={{background:"none",border:"none",color:C.t3,cursor:"pointer",fontSize:"0.6rem"}} onClick={()=>moveT(pi,ti,1)}>↓</button>
+<button style={{background:"none",border:"none",color:C.red+"55",cursor:"pointer",fontSize:"0.6rem"}} onClick={()=>delT(pi,ti)}>✕</button></div>
+{editTN===`${pi}-${ti}`&&<div style={{marginTop:4,marginLeft:24}}><input style={{...z.inp,padding:"4px 8px",fontSize:"0.72rem"}} value={t.note||""} onChange={e=>updT(pi,ti,{note:e.target.value})} placeholder="Nota de la tarea..." onKeyDown={e=>e.key==="Enter"&&setEditTN(null)}/></div>}
+{t.note&&editTN!==`${pi}-${ti}`&&<div style={{marginLeft:24,fontSize:"0.68rem",color:C.t3,fontStyle:"italic",marginTop:2}}>💬 {t.note}</div>}
+</div>))}</div>))}</div>
+{editP!==null&&<ProjEdit idx={editP} onClose={()=>setEditP(null)}/>}
+</div>)};
+
+/* === HABITS === */
+const HabitsPage=()=>{
+const[editH,setEditH]=useState(null);const activeH=habits.filter(h=>h.active);const wk=getWk();
+const wkCnt=activeH.map(h=>{let c=0;wk.forEach(dt=>{if(hw[`${dt}_${h.id}`])c++});return{id:h.id,c}});
+const totWk=wkCnt.reduce((a,x)=>a+x.c,0);const maxWk=activeH.length*7;const wkPct=maxWk>0?Math.round(totWk/maxWk*100):0;
+const curMo=new Date().getMonth();const curYr=new Date().getFullYear();
+let moTot=0,moMax=0;const dim=new Date(curYr,curMo+1,0).getDate();for(let d=1;d<=dim;d++){const dt=`${curYr}-${String(curMo+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;activeH.forEach(h=>{moMax++;if(hw[`${dt}_${h.id}`])moTot++})}const moPct=moMax>0?Math.round(moTot/moMax*100):0;
+let yrTot=0,yrMax=0;for(let m=0;m<12;m++){const d2=new Date(curYr,m+1,0).getDate();for(let d=1;d<=d2;d++){const dt=`${curYr}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;activeH.forEach(h=>{yrMax++;if(hw[`${dt}_${h.id}`])yrTot++})}}const yrPct=yrMax>0?Math.round(yrTot/yrMax*100):0;
+const addH=()=>{sv({...D,habits:[...habits,{id:uid(),name:"Nuevo hábito",emoji:"✅",meta:"Diario",active:true}]})};
+const updH=(i,u)=>{const h=[...habits];h[i]={...h[i],...u};sv({...D,habits:h})};
+const delH=i=>{const h=[...habits];h.splice(i,1);sv({...D,habits:h})};
+return(<div style={{animation:"fadeIn 0.3s ease-out"}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div style={{fontSize:"1.3rem",fontWeight:700}}>🎯 Hábitos</div><button style={z.btn(true)} onClick={addH}>+ Hábito</button></div>
+<G3>{[["Semanal",wkPct,C.lime],["Mensual",moPct,C.blue],["Anual",yrPct,C.purple]].map(([l,p,c])=>(<div key={l} style={z.card}><div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{...z.lb,marginBottom:0}}>{l}</span><span style={{fontFamily:"monospace",fontSize:"0.76rem",color:c,fontWeight:600}}>{p}%</span></div><div style={{width:"100%",height:7,background:C.bg3,borderRadius:100,overflow:"hidden"}}><div style={{height:"100%",borderRadius:100,width:`${p}%`,background:c}}/></div></div>))}</G3>
+<div style={{...z.card,marginTop:4}}><div style={z.lb}>Esta Semana</div><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:500}}><thead><tr><th style={z.th}>Hábito</th><th style={z.th}>Meta</th>{DOWS.map(d=><th key={d} style={{...z.th,textAlign:"center"}}>{d}</th>)}<th style={{...z.th,textAlign:"center"}}>Score</th></tr></thead>
+<tbody>{activeH.map((h,hi)=>{const wc=wkCnt.find(x=>x.id===h.id)?.c||0;return(<tr key={h.id}><td style={{...z.td,fontWeight:500,cursor:"pointer"}} onClick={()=>setEditH(hi)}>{h.emoji} {h.name} ✏️</td><td style={{...z.td,fontSize:"0.65rem",color:C.t3}}>{h.meta}</td>
+{wk.map((dt,i)=>{const key=`${dt}_${h.id}`;const done=hw[key];return<td key={i} style={{...z.td,textAlign:"center",cursor:"pointer",padding:"4px 2px"}} onClick={()=>{const n={...hw};n[key]=!done;sv({...D,habitWeekly:n})}}><span style={{display:"inline-block",width:24,height:24,borderRadius:6,lineHeight:"24px",fontSize:"0.66rem",background:done?C.lime:C.bg3,color:done?C.bg0:C.t3,fontWeight:700}}>{done?"✓":""}</span></td>})}
+<td style={{...z.td,textAlign:"center",fontFamily:"monospace",fontWeight:600}}>{wc}/7</td></tr>)})}</tbody></table></div></div>
+{editH!==null&&<Mdl title="✏️ Hábito" onClose={()=>setEditH(null)} ch={<div style={{display:"flex",flexDirection:"column",gap:10}}>
+<G2><div><div style={{...z.lb,marginBottom:4}}>Emoji</div><input style={z.inp} value={habits[editH].emoji} onChange={e=>updH(editH,{emoji:e.target.value})}/></div><div><div style={{...z.lb,marginBottom:4}}>Nombre</div><input style={z.inp} value={habits[editH].name} onChange={e=>updH(editH,{name:e.target.value})}/></div></G2>
+<div><div style={{...z.lb,marginBottom:4}}>Meta</div><input style={z.inp} value={habits[editH].meta} onChange={e=>updH(editH,{meta:e.target.value})}/></div>
+<div style={{display:"flex",gap:8}}><button style={z.btn(habits[editH].active)} onClick={()=>updH(editH,{active:!habits[editH].active})}>{habits[editH].active?"Activo ✓":"Inactivo"}</button><button style={z.btnD} onClick={()=>{delH(editH);setEditH(null)}}>Eliminar</button><button style={z.btn(false)} onClick={()=>setEditH(null)}>Cerrar</button></div></div>}/>}
+</div>)};
+
+/* === HORARIO === */
+const HorarioPage=()=>{
+const[ec,setEc]=useState(null);
+const updSlot=(ri,si,v)=>{const h=[...horario];h[ri]={...h[ri],slots:[...h[ri].slots]};h[ri].slots[si]=v;sv({...D,horario:h})};
+const addRow=()=>{sv({...D,horario:[...horario,{hour:"??:00",slots:["","","","","","",""]}]})};
+const delRow=i=>{const h=[...horario];h.splice(i,1);sv({...D,horario:h})};
+const updHr=(i,v)=>{const h=[...horario];h[i]={...h[i],hour:v};sv({...D,horario:h})};
+const colFor=v=>{if(!v)return{bg:"transparent",c:C.t3};if(v.includes("Gym"))return{bg:C.lime+"15",c:C.lime};if(v.includes("Work")||v.includes("Proyectos")||v.includes("Reuniones"))return{bg:C.blue+"15",c:C.blue};if(v.includes("Estudiar"))return{bg:C.cyan+"15",c:C.cyan};if(v.includes("Tenis")||v.includes("Pádel"))return{bg:C.orange+"15",c:C.orange};if(v.includes("Lectura"))return{bg:C.purple+"15",c:C.purple};if(v.includes("Descanso")||v.includes("Libre"))return{bg:C.t3+"15",c:C.t3};if(v.includes("Almuerzo"))return{bg:C.green+"15",c:C.green};return{bg:C.bg3,c:C.t1}};
+return(<div style={{animation:"fadeIn 0.3s ease-out"}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div style={{fontSize:"1.3rem",fontWeight:700}}>📅 Horario</div><button style={z.btn(true)} onClick={addRow}>+ Franja</button></div>
+<div style={z.card}><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:600}}>
+<thead><tr><th style={z.th}>Hora</th>{DOWS.map(d=><th key={d} style={{...z.th,textAlign:"center"}}>{d}</th>)}<th style={z.th}></th></tr></thead>
+<tbody>{horario.map((row,ri)=>(<tr key={ri}>
+<td style={{...z.td,padding:"4px"}}>{ec===`h${ri}`?<input style={{...z.inpM,padding:"4px",maxWidth:65}} value={row.hour} autoFocus onChange={e=>updHr(ri,e.target.value)} onBlur={()=>setEc(null)} onKeyDown={e=>e.key==="Enter"&&setEc(null)}/>:<span style={{fontFamily:"monospace",fontWeight:600,fontSize:"0.72rem",color:C.t3,cursor:"pointer"}} onClick={()=>setEc(`h${ri}`)}>{row.hour}</span>}</td>
+{row.slots.map((v,si)=>{const col=colFor(v);const key=`${ri}-${si}`;return<td key={si} style={{...z.td,textAlign:"center",background:col.bg,padding:"4px 2px"}} onClick={()=>setEc(key)}>
+{ec===key?<input style={{...z.inp,padding:"4px",fontSize:"0.7rem",textAlign:"center",maxWidth:110}} value={v} autoFocus onChange={e=>updSlot(ri,si,e.target.value)} onBlur={()=>setEc(null)} onKeyDown={e=>e.key==="Enter"&&setEc(null)}/>:<span style={{color:col.c,fontSize:"0.7rem",fontWeight:v?500:400,cursor:"pointer"}}>{v||"—"}</span>}</td>})}
+<td style={z.td}><button style={{...z.btnD,padding:"2px 5px",fontSize:"0.5rem"}} onClick={()=>delRow(ri)}>✕</button></td></tr>))}</tbody></table></div></div></div>)};
+
+/* === LECTURA === */
+const LecturaPage=()=>{
+const[editB,setEditB]=useState(null);const[showLF,setShowLF]=useState(false);const[lf,setLf]=useState({date:todayS(),book:"",pages:"",minutes:"",notes:""});
+const addBk=()=>{sv({...D,books:[...books,{id:uid(),title:"Nuevo Libro",author:"",status:"queue",progress:0,genre:"",rating:0,startDate:"",notes:""}]})};
+const updBk=(i,u)=>{const b=[...books];b[i]={...b[i],...u};sv({...D,books:b})};
+const delBk=i=>{const b=[...books];b.splice(i,1);sv({...D,books:b})};
+const addLog=()=>{if(!lf.book)return;sv({...D,readingLog:[{id:uid(),...lf},...readingLog]});setLf({date:todayS(),book:"",pages:"",minutes:"",notes:""});setShowLF(false)};
+const delLog=i=>{const r=[...readingLog];r.splice(i,1);sv({...D,readingLog:r})};
+const reading=books.filter(b=>b.status==="reading");const queue=books.filter(b=>b.status==="queue");const done=books.filter(b=>b.status==="done");
+const BkEdit=({idx,onClose})=>{const b=books[idx];const[f,setF]=useState({...b});return(<Mdl title="✏️ Libro" onClose={onClose} ch={<div style={{display:"flex",flexDirection:"column",gap:10}}>
+<div><div style={{...z.lb,marginBottom:4}}>Título</div><input style={z.inp} value={f.title} onChange={e=>setF({...f,title:e.target.value})}/></div>
+<G2><div><div style={{...z.lb,marginBottom:4}}>Autor</div><input style={z.inp} value={f.author} onChange={e=>setF({...f,author:e.target.value})}/></div><div><div style={{...z.lb,marginBottom:4}}>Género</div><input style={z.inp} value={f.genre} onChange={e=>setF({...f,genre:e.target.value})}/></div></G2>
+<G3><div><div style={{...z.lb,marginBottom:4}}>Status</div><select style={z.inpM} value={f.status} onChange={e=>setF({...f,status:e.target.value})}><option value="reading">📖 Leyendo</option><option value="queue">📋 Cola</option><option value="done">✅ Terminado</option></select></div><div><div style={{...z.lb,marginBottom:4}}>Progreso %</div><input style={z.inpM} type="number" min="0" max="100" value={f.progress} onChange={e=>setF({...f,progress:+e.target.value})}/></div><div><div style={{...z.lb,marginBottom:4}}>Rating</div><input style={z.inpM} type="number" min="0" max="5" value={f.rating} onChange={e=>setF({...f,rating:+e.target.value})}/></div></G3>
+<div><div style={{...z.lb,marginBottom:4}}>Notas</div><textarea style={{...z.inp,minHeight:45}} value={f.notes||""} onChange={e=>setF({...f,notes:e.target.value})}/></div>
+<div style={{display:"flex",gap:8}}><button style={z.btn(true)} onClick={()=>{updBk(idx,f);onClose()}}>Guardar</button><button style={z.btnD} onClick={()=>{delBk(idx);onClose()}}>Eliminar</button><button style={z.btn(false)} onClick={onClose}>Cancelar</button></div></div>}/>)};
+return(<div style={{animation:"fadeIn 0.3s ease-out"}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div style={{fontSize:"1.3rem",fontWeight:700}}>📚 Lectura</div><div style={{display:"flex",gap:6}}><button style={z.btn(true)} onClick={addBk}>+ Libro</button><button style={z.btnS(false)} onClick={()=>setShowLF(!showLF)}>📝 Log</button></div></div>
+<G3><div style={z.card}><div style={z.lb}>Total</div><div style={z.big}>{books.length}</div></div><div style={z.card}><div style={z.lb}>Leyendo</div><div style={z.big}>{reading.length}</div></div><div style={z.card}><div style={z.lb}>Cola</div><div style={z.big}>{queue.length}</div></div><div style={z.card}><div style={z.lb}>Terminados</div><div style={z.big}>{done.length}</div></div></G3>
+<div style={z.card}><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:550}}><thead><tr>{["Libro","Autor","Status","Progreso","Rating","Notas",""].map(h=><th key={h} style={z.th}>{h}</th>)}</tr></thead>
+<tbody>{books.map((b,i)=>(<tr key={b.id}><td style={{...z.td,fontWeight:600}}>{b.title}</td><td style={{...z.td,color:C.t2}}>{b.author}</td><td style={z.td}><span style={z.tag(b.status==="reading"?C.blue:b.status==="done"?C.green:C.t3)}>{b.status==="reading"?"📖":"📋"}</span></td><td style={z.td}><div style={{display:"flex",alignItems:"center",gap:4}}><div style={{width:40,height:4,background:C.bg3,borderRadius:100,overflow:"hidden"}}><div style={{height:"100%",width:`${b.progress}%`,background:C.blue,borderRadius:100}}/></div><span style={{fontFamily:"monospace",fontSize:"0.65rem"}}>{b.progress}%</span></div></td><td style={z.td}>{b.rating>0?"⭐".repeat(b.rating):"—"}</td><td style={{...z.td,fontSize:"0.7rem",color:C.t2,maxWidth:100,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{b.notes}</td><td style={z.td}><button style={z.btnS(false)} onClick={()=>setEditB(i)}>✏️</button></td></tr>))}</tbody></table></div></div>
+{showLF&&<div style={{...z.card,background:C.bg2}}><div style={z.lb}>📝 Nueva Entrada</div><div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(100px,1fr))",gap:8,marginBottom:10}}><div><select style={z.inpM} value={lf.book} onChange={e=>setLf({...lf,book:e.target.value})}><option value="">Libro...</option>{books.map(b=><option key={b.id} value={b.title}>{b.title}</option>)}</select></div><div><input style={z.inpM} type="date" value={lf.date} onChange={e=>setLf({...lf,date:e.target.value})}/></div><div><input style={z.inpM} type="number" placeholder="Págs" value={lf.pages} onChange={e=>setLf({...lf,pages:e.target.value})}/></div><div><input style={z.inpM} type="number" placeholder="Min" value={lf.minutes} onChange={e=>setLf({...lf,minutes:e.target.value})}/></div></div><div style={{marginBottom:8}}><input style={z.inp} value={lf.notes} onChange={e=>setLf({...lf,notes:e.target.value})} placeholder="Notas"/></div><button style={z.btn(true)} onClick={addLog}>Agregar</button></div>}
+<div style={z.card}><div style={z.lb}>📝 Log</div><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr>{["Fecha","Libro","Págs","Min","Notas",""].map(h=><th key={h} style={z.th}>{h}</th>)}</tr></thead><tbody>{readingLog.map((r,i)=>(<tr key={r.id||i}><td style={{...z.td,fontFamily:"monospace"}}>{r.date}</td><td style={{...z.td,fontWeight:500}}>{r.book}</td><td style={{...z.td,fontFamily:"monospace"}}>{r.pages}</td><td style={{...z.td,fontFamily:"monospace"}}>{r.minutes}</td><td style={{...z.td,color:C.t2,fontSize:"0.72rem"}}>{r.notes}</td><td style={z.td}><button style={{...z.btnD,padding:"2px 5px",fontSize:"0.5rem"}} onClick={()=>delLog(i)}>✕</button></td></tr>))}</tbody></table></div></div>
+{editB!==null&&<BkEdit idx={editB} onClose={()=>setEditB(null)}/>}
+</div>)};
+
+/* === TRENDS === */
+const TrendsPage=()=>{
+const wPts=fl.filter(e=>e.weight).map(e=>({v:+e.weight,label:e.date.slice(5)}));const wAvg=movAvg(fl.filter(e=>e.weight),"weight");
+const calPts=fl.filter(e=>+e.cal>0).map(e=>({v:+e.cal,label:e.date.slice(5)}));const calAvg=movAvg(fl.filter(e=>+e.cal>0),"cal");
+const protPts=fl.filter(e=>+e.prot>0).map(e=>({v:+e.prot,label:e.date.slice(5)}));const protAvg=movAvg(fl.filter(e=>+e.prot>0),"prot");
+const wArr=fl.filter(e=>e.weight);const wr=wArr.length>=7?((+wArr[0].weight)-(+wArr[wArr.length-1].weight))/(wArr.length/7):0;
+return(<div style={{animation:"fadeIn 0.3s ease-out"}}>
+<div style={{fontSize:"1.3rem",fontWeight:700,marginBottom:16}}>📈 Tendencias</div>
+<G3><div style={z.card}><div style={z.lb}>Ritmo</div><div style={z.big}>{wr.toFixed(2)}</div><div style={{fontSize:"0.72rem",color:C.t2,marginTop:3}}>kg/sem</div></div>
+<div style={z.card}><div style={z.lb}>Peso 7d</div><div style={z.big}>{wAvg.length>0?wAvg[wAvg.length-1].v:curW}</div><div style={{fontSize:"0.72rem",color:C.t2,marginTop:3}}>kg</div></div>
+<div style={z.card}><div style={z.lb}>Cal 7d</div><div style={z.big}>{calAvg.length>0?calAvg[calAvg.length-1].v:0}</div><div style={{fontSize:"0.72rem",color:C.t2,marginTop:3}}>kcal</div></div></G3>
+<G2><div style={z.card}><div style={{display:"flex",justifyContent:"space-between"}}><div style={z.lb}>Peso</div><div style={{fontSize:"0.5rem",color:C.t3}}>— Real <span style={{color:C.orange}}>--- 7d</span></div></div><Chart pts={wPts} pts2={wAvg} color={C.lime} color2={C.orange} h={160}/></div>
+<div style={z.card}><div style={{display:"flex",justifyContent:"space-between"}}><div style={z.lb}>Calorías</div><div style={{fontSize:"0.5rem",color:C.t3}}>— Real <span style={{color:C.orange}}>--- 7d</span></div></div><Chart pts={calPts} pts2={calAvg} color={C.blue} color2={C.orange} h={160}/></div></G2>
+<G2><div style={z.card}><div style={z.lb}>Proteína</div><Chart pts={protPts} pts2={protAvg} color={C.purple} color2={C.orange} h={150}/></div>
+<div style={z.card}><div style={z.lb}>Pasos</div><Chart pts={fl.filter(e=>+e.steps>0).map(e=>({v:+e.steps,label:e.date.slice(5)}))} pts2={movAvg(fl.filter(e=>+e.steps>0),"steps")} color={C.green} color2={C.orange} h={150}/></div></G2>
+</div>)};
+
+/* === WEEKLY REPORT === */
+const ReportPage=()=>{
+const last7=fl.slice(-7);const activeH=habits.filter(h=>h.active);const wk=getWk();
+const avgCal=last7.filter(e=>+e.cal>0).length>0?(last7.filter(e=>+e.cal>0).reduce((a,e)=>a+(+e.cal),0)/last7.filter(e=>+e.cal>0).length).toFixed(0):0;
+const avgProt=last7.filter(e=>+e.prot>0).length>0?(last7.filter(e=>+e.prot>0).reduce((a,e)=>a+(+e.prot),0)/last7.filter(e=>+e.prot>0).length).toFixed(0):0;
+const compDays=last7.filter(e=>chkComp(e).day).length;
+const wS=last7.length>0?+last7[0].weight:S.startWeight;const wE=last7.length>0?+last7[last7.length-1].weight:S.startWeight;
+let habTot=0;activeH.forEach(h=>{wk.forEach(dt=>{if(hw[`${dt}_${h.id}`])habTot++})});
+const habPct=activeH.length*7>0?Math.round(habTot/(activeH.length*7)*100):0;
+const[copied,setCopied]=useState(false);
+const rpt=`📊 REPORTE SEMANAL — ${S.planName}\n${"─".repeat(35)}\n\n🏋️ FITNESS\n• Peso: ${wS} → ${wE} kg (${(wS-wE).toFixed(1)} kg)\n• Cal promedio: ${avgCal} kcal/día\n• Prot promedio: ${avgProt}g/día\n• Días compliance: ${compDays}/7\n• Pasos promedio: ${(+avg(last7.filter(e=>+e.steps>0),"steps")).toLocaleString()}\n\n🎯 HÁBITOS: ${habPct}%\n${activeH.map(h=>{let c=0;wk.forEach(dt=>{if(hw[`${dt}_${h.id}`])c++});return`• ${h.emoji} ${h.name}: ${c}/7`}).join("\n")}\n\n📂 PROYECTOS\n${projects.map(p=>`• ${p.name}: ${p.progress}% — ${p.status}`).join("\n")}\n\n📚 LECTURA\n${books.filter(b=>b.status==="reading").map(b=>`• ${b.title}: ${b.progress}%`).join("\n")}\n\n📅 ${new Date().toLocaleDateString("es",{day:"numeric",month:"long",year:"numeric"})}`;
+const copy=()=>{navigator.clipboard.writeText(rpt).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2000)})};
+return(<div style={{animation:"fadeIn 0.3s ease-out"}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:8}}><div style={{fontSize:"1.3rem",fontWeight:700}}>📋 Reporte Semanal</div><button style={z.btn(true)} onClick={copy}>{copied?"✓ Copiado!":"📋 Copiar"}</button></div>
+<G3><div style={z.card}><div style={z.lb}>Δ Peso</div><div style={z.big}>{(wS-wE).toFixed(1)}</div><div style={{fontSize:"0.72rem",color:C.t2,marginTop:3}}>kg</div></div>
+<div style={z.card}><div style={z.lb}>Prom Cal</div><div style={z.big}>{avgCal}</div><div style={{fontSize:"0.72rem",color:C.t2,marginTop:3}}>kcal</div></div>
+<div style={z.card}><div style={z.lb}>Compliance</div><div style={z.big}>{compDays}/7</div><div style={{fontSize:"0.72rem",color:C.t2,marginTop:3}}>días ✓</div></div>
+<div style={z.card}><div style={z.lb}>Hábitos</div><div style={z.big}>{habPct}%</div><div style={{fontSize:"0.72rem",color:C.t2,marginTop:3}}>completados</div></div></G3>
+<div style={z.card}><div style={z.lb}>Vista previa</div><pre style={{fontFamily:"'IBM Plex Mono',monospace",fontSize:"0.7rem",color:C.t1,whiteSpace:"pre-wrap",lineHeight:1.7,background:C.bg0,padding:14,borderRadius:10,border:`1px solid ${C.b1}`,overflowX:"auto"}}>{rpt}</pre></div>
+</div>)};
+
+/* === DASHBOARD === */
+const DashboardPage=()=>{
+const tasks=D?.todayTasks||DEF_TT;const activeH=habits.filter(h=>h.active);const wk=getWk();
+const toggleTask=i=>{const t=[...tasks];t[i]={...t[i],done:!t[i].done};sv({...D,todayTasks:t})};
+const[jText,setJText]=useState(journal[todayS()]||"");
+const saveJ=()=>{sv({...D,journal:{...journal,[todayS()]:jText}})};
+return(<div style={{animation:"fadeIn 0.3s ease-out"}}>
+<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16,flexWrap:"wrap",gap:10}}>
+<div><div style={{fontSize:"1.4rem",fontWeight:800}}>⚡ Life Dashboard</div><div style={{fontSize:"0.75rem",color:C.t3}}>Proyectos · Hábitos · Horario · Lectura · Fitness</div></div>
+<div style={{fontFamily:"monospace",fontSize:"0.75rem",color:C.t2,padding:"6px 12px",background:C.bg2,border:`1px solid ${C.b1}`,borderRadius:8}}>{new Date().toLocaleDateString("es",{weekday:"long",day:"numeric",month:"short"})}</div></div>
+
+<div style={z.card}><div style={z.lb}>📂 Proyectos</div>
+{projects.map(p=>(<div key={p.id} style={{display:"flex",alignItems:"center",gap:10,padding:"7px 0",borderBottom:`1px solid ${C.b1}`,flexWrap:"wrap"}}>
+<span style={{fontWeight:600,flex:1,fontSize:"0.83rem",minWidth:100}}>{p.name}</span>
+<span style={z.tag(p.status==="En progreso"?C.blue:C.green)}>{p.status}</span>
+<div style={{width:70}}><div style={{width:"100%",height:5,background:C.bg3,borderRadius:100,overflow:"hidden"}}><div style={{height:"100%",borderRadius:100,width:`${p.progress}%`,background:C.lime}}/></div><div style={{fontSize:"0.58rem",color:C.t3,textAlign:"right",marginTop:2}}>{p.progress}%</div></div>
+<span style={z.tag(p.priority==="Alta"?C.red:C.orange)}>{p.priority}</span></div>))}</div>
+
+<G2>
+<div style={z.card}><div style={z.lb}>🎯 Hábitos</div>
+<div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse"}}><thead><tr><th style={z.th}>Hábito</th>{DOWS.map(d=><th key={d} style={{...z.th,textAlign:"center",padding:"4px 2px"}}>{d}</th>)}</tr></thead>
+<tbody>{activeH.map(h=>(<tr key={h.id}><td style={{...z.td,fontSize:"0.7rem",fontWeight:500}}>{h.emoji} {h.name}</td>
+{wk.map((dt,i)=>{const key=`${dt}_${h.id}`;const done=hw[key];return<td key={i} style={{...z.td,textAlign:"center",cursor:"pointer",padding:"3px 1px"}} onClick={()=>{const n={...hw};n[key]=!done;sv({...D,habitWeekly:n})}}><span style={{display:"inline-block",width:18,height:18,borderRadius:4,lineHeight:"18px",fontSize:"0.56rem",background:done?C.lime:C.bg3,color:done?C.bg0:C.t3,fontWeight:700}}>{done?"✓":""}</span></td>})}</tr>))}</tbody></table></div></div>
+
+<div>
+<div style={{...z.card,marginBottom:12}}><div style={z.lb}>🏋️ Mini-Cut</div>
+<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:5,fontSize:"0.78rem"}}>
+<div><span style={{color:C.t3}}>Peso</span><div style={{fontFamily:"monospace",fontWeight:600}}>{curW} kg</div></div>
+<div><span style={{color:C.t3}}>Meta</span><div style={{fontFamily:"monospace",fontWeight:600}}>{S.planGoal}</div></div>
+<div><span style={{color:C.t3}}>Progreso</span><div style={{fontFamily:"monospace",fontWeight:600}}>{prog}%</div></div>
+<div><span style={{color:C.t3}}>Sem</span><div style={{fontFamily:"monospace",fontWeight:600}}>{Math.min(Math.ceil(dayN/7),S.cutWeeks)}/{S.cutWeeks}</div></div></div></div>
+<div style={z.card}><div style={z.lb}>📚 Lectura</div>
+{books.filter(b=>b.status==="reading").map(b=>(<div key={b.id} style={{display:"flex",alignItems:"center",gap:8,marginBottom:5}}>
+<span style={{flex:1,fontWeight:500,fontSize:"0.78rem"}}>{b.title}</span>
+<div style={{width:45,height:4,background:C.bg3,borderRadius:100,overflow:"hidden"}}><div style={{height:"100%",width:`${b.progress}%`,background:C.blue,borderRadius:100}}/></div>
+<span style={{fontFamily:"monospace",fontSize:"0.65rem",color:C.t3}}>{b.progress}%</span></div>))}</div>
+</div></G2>
+
+<div style={z.card}><div style={z.lb}>✅ Hoy</div>
+{tasks.map((t,i)=>(<div key={t.id} style={{display:"flex",alignItems:"center",gap:8,padding:"6px 0",borderBottom:`1px solid ${C.b1}`,cursor:"pointer"}} onClick={()=>toggleTask(i)}>
+<span style={{display:"inline-block",width:20,height:20,borderRadius:5,lineHeight:"20px",textAlign:"center",fontSize:"0.63rem",background:t.done?C.lime:C.bg3,color:t.done?C.bg0:C.t3,fontWeight:700,flexShrink:0}}>{t.done?"✓":""}</span>
+<span style={{flex:1,fontSize:"0.8rem",textDecoration:t.done?"line-through":"none",color:t.done?C.t3:C.t0}}>{t.task}</span>
+<span style={z.tag(t.cat==="Gym"?C.lime:t.cat==="Trabajo"?C.blue:t.cat==="Lectura"?C.purple:t.cat==="Fitness"?C.orange:C.cyan)}>{t.cat}</span></div>))}</div>
+
+<div style={z.card}><div style={z.lb}>📝 Journal — Hoy</div>
+<textarea style={{...z.inp,minHeight:70}} value={jText} onChange={e=>setJText(e.target.value)} placeholder="Reflexiones, aprendizajes, gratitud..."/>
+<button style={{...z.btn(true),marginTop:8}} onClick={saveJ}>Guardar</button>
+{Object.keys(journal).filter(k=>k!==todayS()&&journal[k]).slice(-3).reverse().map(k=>(<div key={k} style={{marginTop:8,padding:"7px 0",borderTop:`1px solid ${C.b1}`}}><span style={{fontFamily:"monospace",fontSize:"0.65rem",color:C.t3}}>{k}</span><div style={{fontSize:"0.78rem",color:C.t1,marginTop:3}}>{journal[k]}</div></div>))}
+</div>
+</div>)};
+
+/* === SETTINGS === */
+const SettingsModal=({onClose})=>{const[f,setF]=useState({...S});
+return(<Mdl title="⚙ Configuración" onClose={onClose} ch={<div style={{display:"flex",flexDirection:"column",gap:10}}>
+{[["Plan","planName","t"],["Meta","planGoal","t"],["Peso inicial","startWeight","n"],["Peso meta","goalWeight","n"],["Cintura inicial","startWaist","n"],["Semanas","cutWeeks","n"],["Entrenos/sem","trainingPerWeek","n"]].map(([l,k,t])=>(<div key={k} style={{display:"flex",alignItems:"center",gap:10}}>
+<span style={{flex:1,fontSize:"0.8rem",color:C.t2}}>{l}</span>
+{t==="n"?<input style={{...z.inpM,maxWidth:100,textAlign:"right"}} type="number" step={k.includes("Weight")||k.includes("Waist")?"0.1":"1"} value={f[k]} onChange={e=>setF({...f,[k]:+e.target.value})}/>:
+<input style={{...z.inp,maxWidth:200}} value={f[k]} onChange={e=>setF({...f,[k]:e.target.value})}/>}</div>))}
+<div style={{display:"flex",alignItems:"center",gap:10}}><span style={{flex:1,fontSize:"0.8rem",color:C.t2}}>Fecha inicio</span><input style={{...z.inpM,maxWidth:155}} type="date" value={f.startDate} onChange={e=>setF({...f,startDate:e.target.value})}/></div>
+<div style={{display:"flex",gap:8,marginTop:10}}><button style={z.btn(true)} onClick={()=>{sv({...D,settings:f});onClose()}}>Guardar</button><button style={z.btn(false)} onClick={onClose}>Cancelar</button></div>
+</div>}/>)};
+
+/* === DAY TYPE EDITOR (grams, not multipliers) === */
+const DayTypeEditor=({onClose})=>{
+const[types,setTypes]=useState([...dayTypes]);const[ed,setEd]=useState(null);
+const[f,setF]=useState({name:"",emoji:"🏋️",color:"#b8f000",cal:2250,prot:170,carbs:220,fat:65,sugar:40,calMin:2250,calMax:2350});
+return(<Mdl title="🔧 Tipos de Día" onClose={onClose} wide ch={!ed?(<div>
+{types.map(t=>(<div key={t.id} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 0",borderBottom:`1px solid ${C.b1}`,flexWrap:"wrap"}}>
+<span style={{fontSize:"1rem"}}>{t.emoji}</span><span style={{flex:1,fontWeight:500,minWidth:80}}>{t.name}</span>
+<span style={{fontFamily:"monospace",fontSize:"0.58rem",color:C.t2}}>{t.cal}kcal {t.prot}P {t.carbs}C {t.fat}G ≤{t.sugar}S [{t.calMin}-{t.calMax}]</span>
+<button style={z.btnS(false)} onClick={()=>{setEd(t.id);setF({...t})}}>✏️</button>
+<button style={z.btnD} onClick={()=>setTypes(types.filter(x=>x.id!==t.id))}>✕</button></div>))}
+<div style={{display:"flex",gap:8,marginTop:12,flexWrap:"wrap"}}>
+<button style={z.btn(false)} onClick={()=>{setEd("new");setF({name:"",emoji:"🏋️",color:"#b8f000",cal:2250,prot:170,carbs:220,fat:65,sugar:40,calMin:2250,calMax:2350})}}>+ Nuevo</button>
+<button style={z.btn(true)} onClick={()=>{sv({...D,dayTypes:types});onClose()}}>Guardar</button></div>
+</div>):(<div style={{display:"flex",flexDirection:"column",gap:8}}>
+<div style={{fontSize:"0.85rem",fontWeight:600,color:C.t1}}>{ed==="new"?"Crear":"Editando: "+f.name}</div>
+{[["Nombre","name","text"],["Emoji","emoji","text"],["Color","color","color"]].map(([l,k,t])=>(<div key={k} style={{display:"flex",alignItems:"center",gap:8}}><span style={{width:110,fontSize:"0.76rem",color:C.t2}}>{l}</span><input style={{...z.inpM,maxWidth:t==="color"?55:160}} type={t} value={f[k]} onChange={e=>setF({...f,[k]:e.target.value})}/></div>))}
+<div style={{...z.lb,marginTop:6}}>Macros objetivo (gramos)</div>
+<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(90px,1fr))",gap:8}}>
+{[["Calorías","cal"],["Proteína","prot"],["Carbos","carbs"],["Grasas","fat"],["Azúcar máx","sugar"]].map(([l,k])=>(<div key={k}><div style={{fontSize:"0.6rem",color:C.t3,marginBottom:3}}>{l}</div><input style={z.inpM} type="number" value={f[k]} onChange={e=>setF({...f,[k]:+e.target.value})}/></div>))}</div>
+<div style={{...z.lb,marginTop:6}}>Rango Calorías para Compliance (K✓)</div>
+<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+<div><div style={{fontSize:"0.6rem",color:C.t3,marginBottom:3}}>Min</div><input style={z.inpM} type="number" value={f.calMin} onChange={e=>setF({...f,calMin:+e.target.value})}/></div>
+<div><div style={{fontSize:"0.6rem",color:C.t3,marginBottom:3}}>Max</div><input style={z.inpM} type="number" value={f.calMax} onChange={e=>setF({...f,calMax:+e.target.value})}/></div></div>
+<div style={{display:"flex",gap:8,marginTop:8}}>
+<button style={z.btn(true)} onClick={()=>{let nt;if(ed==="new")nt=[...types,{...f,id:uid()}];else nt=types.map(t=>t.id===ed?{...t,...f}:t);setTypes(nt);setEd(null)}}>Confirmar</button>
+<button style={z.btn(false)} onClick={()=>setEd(null)}>Volver</button></div>
+</div>)}/>)};
+
+/* === LAYOUT === */
+if(ld)return<div style={{display:"flex",alignItems:"center",justifyContent:"center",minHeight:"100vh",background:C.bg0}}><div style={{fontFamily:"'IBM Plex Mono',monospace",fontSize:"1.6rem",fontWeight:700,background:`linear-gradient(135deg,${C.t0},${C.lime})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>LIFE DASHBOARD</div></div>;
+
+const nav=[{id:"dashboard",icon:"⚡",lb:"Dashboard"},{id:"fitness",icon:"🏋️",lb:"Fitness"},{id:"trends",icon:"📈",lb:"Tendencias"},{id:"report",icon:"📋",lb:"Reporte"},{id:"projects",icon:"📂",lb:"Proyectos"},{id:"habits",icon:"🎯",lb:"Hábitos"},{id:"horario",icon:"📅",lb:"Horario"},{id:"lectura",icon:"📚",lb:"Lectura"}];
+const mobNav=[{id:"dashboard",icon:"⚡"},{id:"fitness",icon:"🏋️"},{id:"habits",icon:"🎯"},{id:"projects",icon:"📂"},{id:"lectura",icon:"📚"}];
+
+return(
+<div style={{display:"flex",minHeight:"100vh",background:C.bg0,fontFamily:"'DM Sans',sans-serif",color:C.t0}}>
+{/* Mobile hamburger */}
+<button className="mob-btn" onClick={()=>setSideOpen(!sideOpen)}>☰</button>
+{/* Overlay */}
+<div className={`sidebar-overlay ${sideOpen?"open":""}`} onClick={()=>setSideOpen(false)}/>
+{/* Sidebar */}
+<div className={`sidebar ${sideOpen?"open":""}`}>
+<div style={{padding:"0 16px 16px",borderBottom:`1px solid ${C.b1}`,marginBottom:10}}>
+<div style={{fontFamily:"'IBM Plex Mono',monospace",fontSize:"1.05rem",fontWeight:700,background:`linear-gradient(135deg,${C.t0},${C.lime})`,WebkitBackgroundClip:"text",WebkitTextFillColor:"transparent"}}>LIFE DASHBOARD</div>
+<div style={{fontFamily:"monospace",fontSize:"0.5rem",color:C.t3,letterSpacing:2,marginTop:2}}>FITNESS OS v6</div></div>
+<div style={{flex:1,padding:"4px 10px",overflowY:"auto"}}>
+<div style={{fontSize:"0.48rem",textTransform:"uppercase",letterSpacing:2,color:C.t3,padding:"6px 4px 4px",fontWeight:600}}>Navegación</div>
+{nav.map(n=><div key={n.id} style={z.navI(pg===n.id)} onClick={()=>go(n.id)}><span style={{width:16,textAlign:"center"}}>{n.icon}</span>{n.lb}</div>)}
+<div style={{fontSize:"0.48rem",textTransform:"uppercase",letterSpacing:2,color:C.t3,padding:"12px 4px 4px",fontWeight:600}}>Configurar</div>
+<div style={z.navI(false)} onClick={()=>{setModal("dayTypes");setSideOpen(false)}}>🔧 Tipos de Día</div>
+<div style={z.navI(false)} onClick={()=>{setModal("settings");setSideOpen(false)}}>⚙ Config</div>
+</div>
+<div style={{padding:"12px 14px",borderTop:`1px solid ${C.b1}`}}>
+<div style={{display:"flex",alignItems:"center",gap:8,padding:"7px 10px",background:C.lime+"12",border:`1px solid ${C.lime}20`,borderRadius:8,fontSize:"0.65rem",fontWeight:600,color:C.lime}}>
+<span style={{width:6,height:6,background:C.lime,borderRadius:"50%",animation:"pulse 2s infinite"}}/> Sem {Math.min(Math.ceil(dayN/7),S.cutWeeks)}/{S.cutWeeks}
+</div></div></div>
+
+{/* Main */}
+<div className="main">
+{pg==="dashboard"&&<DashboardPage/>}
+{pg==="fitness"&&<FitnessPage/>}
+{pg==="trends"&&<TrendsPage/>}
+{pg==="report"&&<ReportPage/>}
+{pg==="projects"&&<ProjectsPage/>}
+{pg==="habits"&&<HabitsPage/>}
+{pg==="horario"&&<HorarioPage/>}
+{pg==="lectura"&&<LecturaPage/>}
+</div>
+
+{/* Mobile bottom nav */}
+<div className="mob-bar">
+{mobNav.map(n=><div key={n.id} onClick={()=>go(n.id)} style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"6px 12px",cursor:"pointer",color:pg===n.id?C.lime:C.t3,fontSize:"1.1rem"}}>
+<span>{n.icon}</span><span style={{fontSize:"0.5rem",marginTop:2,fontWeight:600}}>{n.id.slice(0,4)}</span></div>)}
+<div onClick={()=>setSideOpen(true)} style={{display:"flex",flexDirection:"column",alignItems:"center",padding:"6px 12px",cursor:"pointer",color:C.t3,fontSize:"1.1rem"}}>
+<span>☰</span><span style={{fontSize:"0.5rem",marginTop:2,fontWeight:600}}>más</span></div>
+</div>
+
+{modal==="settings"&&<SettingsModal onClose={()=>setModal(null)}/>}
+{modal==="dayTypes"&&<DayTypeEditor onClose={()=>setModal(null)}/>}
+</div>);
+}
+ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(App));
+</script>
 </body>
 </html>
