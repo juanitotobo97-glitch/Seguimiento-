@@ -41,7 +41,9 @@ const uid=()=>"_"+Math.random().toString(36).slice(2,8);
 const fmtD=d=>d.toISOString().split("T")[0];
 const todayS=()=>fmtD(new Date());
 const DOWS=["Lun","Mar","Mié","Jue","Vie","Sáb","Dom"];
-const KEY="life-dashboard-v6";
+const KEY="life-dashboard";
+/* Migrate from old versioned keys */
+(()=>{if(!localStorage.getItem("life-dashboard")){for(const k of["life-dashboard-v6","life-dashboard-v5","life-dashboard-v4"]){const d=localStorage.getItem(k);if(d){localStorage.setItem("life-dashboard",d);break}}}})();
 
 /* === DEFAULTS === */
 const DEF_DT=[
@@ -106,7 +108,14 @@ const DEF={settings:DEF_S,dayTypes:DEF_DT,habits:DEF_HAB,habitWeekly:{},projects
 
 function App(){
 const[D,setD]=useState(null);const[ld,setLd]=useState(true);const[pg,setPg]=useState("dashboard");const[modal,setModal]=useState(null);const[sideOpen,setSideOpen]=useState(false);
-useEffect(()=>{try{const s=localStorage.getItem(KEY);if(s){const p=JSON.parse(s);setD({...DEF,...p,settings:{...DEF_S,...(p.settings||{})}})}else setD({...DEF})}catch{setD({...DEF})}setLd(false)},[]);
+useEffect(()=>{try{const s=localStorage.getItem(KEY);if(s){const p=JSON.parse(s);
+/* Deep merge: user data wins, defaults only fill gaps */
+const merged={};for(const k of Object.keys(DEF)){
+if(p[k]===undefined||p[k]===null){merged[k]=DEF[k]}
+else if(k==="settings"){merged[k]={...DEF_S,...p[k]}}
+else if(k==="dayTypes"){merged[k]=p[k].map(t=>({...DEF_DT.find(d=>d.id===t.id)||{},...t}))}
+else{merged[k]=p[k]}
+}setD(merged)}else setD({...DEF})}catch{setD({...DEF})}setLd(false)},[]);
 const sv=useCallback(nd=>{setD(nd);try{localStorage.setItem(KEY,JSON.stringify(nd))}catch{}},[]);
 const go=p=>{setPg(p);setSideOpen(false)};
 
