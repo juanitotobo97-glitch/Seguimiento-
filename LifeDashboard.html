@@ -273,7 +273,7 @@ return(<div style={{animation:"fadeIn 0.3s ease-out"}}>
 
 /* === HABITS === */
 const HabitsPage=()=>{
-const[editH,setEditH]=useState(null);const activeH=habits.filter(h=>h.active);const wk=getWk();
+const[editH,setEditH]=useState(null);const[hDraft,setHDraft]=useState({emoji:"",name:"",meta:""});const activeH=habits.filter(h=>h.active);const wk=getWk();
 const wkCnt=activeH.map(h=>{let c=0;wk.forEach(dt=>{if(hw[`${dt}_${h.id}`])c++});return{id:h.id,c}});
 const totWk=wkCnt.reduce((a,x)=>a+x.c,0);const maxWk=activeH.length*7;const wkPct=maxWk>0?Math.round(totWk/maxWk*100):0;
 const curMo=new Date().getMonth();const curYr=new Date().getFullYear();
@@ -282,35 +282,41 @@ let yrTot=0,yrMax=0;for(let m=0;m<12;m++){const d2=new Date(curYr,m+1,0).getDate
 const addH=()=>{sv({...D,habits:[...habits,{id:uid(),name:"Nuevo hábito",emoji:"✅",meta:"Diario",active:true}]})};
 const updH=(i,u)=>{const h=[...habits];h[i]={...h[i],...u};sv({...D,habits:h})};
 const delH=i=>{const h=[...habits];h.splice(i,1);sv({...D,habits:h})};
+const openHEdit=i=>{setEditH(i);setHDraft({emoji:habits[i].emoji,name:habits[i].name,meta:habits[i].meta})};
+const saveHEdit=()=>{if(editH===null)return;updH(editH,hDraft);setEditH(null)};
 return(<div style={{animation:"fadeIn 0.3s ease-out"}}>
 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div style={{fontSize:"1.3rem",fontWeight:700}}>🎯 Hábitos</div><button style={z.btn(true)} onClick={addH}>+ Hábito</button></div>
 <G3>{[["Semanal",wkPct,C.lime],["Mensual",moPct,C.blue],["Anual",yrPct,C.purple]].map(([l,p,c])=>(<div key={l} style={z.card}><div style={{display:"flex",justifyContent:"space-between",marginBottom:6}}><span style={{...z.lb,marginBottom:0}}>{l}</span><span style={{fontFamily:"monospace",fontSize:"0.76rem",color:c,fontWeight:600}}>{p}%</span></div><div style={{width:"100%",height:7,background:C.bg3,borderRadius:100,overflow:"hidden"}}><div style={{height:"100%",borderRadius:100,width:`${p}%`,background:c}}/></div></div>))}</G3>
 <div style={{...z.card,marginTop:4}}><div style={z.lb}>Esta Semana</div><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:500}}><thead><tr><th style={z.th}>Hábito</th><th style={z.th}>Meta</th>{DOWS.map(d=><th key={d} style={{...z.th,textAlign:"center"}}>{d}</th>)}<th style={{...z.th,textAlign:"center"}}>Score</th></tr></thead>
-<tbody>{activeH.map((h,hi)=>{const wc=wkCnt.find(x=>x.id===h.id)?.c||0;return(<tr key={h.id}><td style={{...z.td,fontWeight:500,cursor:"pointer"}} onClick={()=>setEditH(hi)}>{h.emoji} {h.name} ✏️</td><td style={{...z.td,fontSize:"0.65rem",color:C.t3}}>{h.meta}</td>
+<tbody>{activeH.map((h,hi)=>{const wc=wkCnt.find(x=>x.id===h.id)?.c||0;const idx=habits.findIndex(x=>x.id===h.id);return(<tr key={h.id}><td style={{...z.td,fontWeight:500,cursor:"pointer"}} onClick={()=>openHEdit(idx)}>{h.emoji} {h.name} ✏️</td><td style={{...z.td,fontSize:"0.65rem",color:C.t3}}>{h.meta}</td>
 {wk.map((dt,i)=>{const key=`${dt}_${h.id}`;const done=hw[key];return<td key={i} style={{...z.td,textAlign:"center",cursor:"pointer",padding:"4px 2px"}} onClick={()=>{const n={...hw};n[key]=!done;sv({...D,habitWeekly:n})}}><span style={{display:"inline-block",width:24,height:24,borderRadius:6,lineHeight:"24px",fontSize:"0.66rem",background:done?C.lime:C.bg3,color:done?C.bg0:C.t3,fontWeight:700}}>{done?"✓":""}</span></td>})}
 <td style={{...z.td,textAlign:"center",fontFamily:"monospace",fontWeight:600}}>{wc}/7</td></tr>)})}</tbody></table></div></div>
 {editH!==null&&<Mdl title="✏️ Hábito" onClose={()=>setEditH(null)} ch={<div style={{display:"flex",flexDirection:"column",gap:10}}>
-<G2><div><div style={{...z.lb,marginBottom:4}}>Emoji</div><input style={z.inp} value={habits[editH].emoji} onChange={e=>updH(editH,{emoji:e.target.value})}/></div><div><div style={{...z.lb,marginBottom:4}}>Nombre</div><input style={z.inp} value={habits[editH].name} onChange={e=>updH(editH,{name:e.target.value})}/></div></G2>
-<div><div style={{...z.lb,marginBottom:4}}>Meta</div><input style={z.inp} value={habits[editH].meta} onChange={e=>updH(editH,{meta:e.target.value})}/></div>
-<div style={{display:"flex",gap:8}}><button style={z.btn(habits[editH].active)} onClick={()=>updH(editH,{active:!habits[editH].active})}>{habits[editH].active?"Activo ✓":"Inactivo"}</button><button style={z.btnD} onClick={()=>{delH(editH);setEditH(null)}}>Eliminar</button><button style={z.btn(false)} onClick={()=>setEditH(null)}>Cerrar</button></div></div>}/>}
+<G2><div><div style={{...z.lb,marginBottom:4}}>Emoji</div><input style={z.inp} value={hDraft.emoji} onChange={e=>setHDraft({...hDraft,emoji:e.target.value})}/></div><div><div style={{...z.lb,marginBottom:4}}>Nombre</div><input style={z.inp} value={hDraft.name} onChange={e=>setHDraft({...hDraft,name:e.target.value})}/></div></G2>
+<div><div style={{...z.lb,marginBottom:4}}>Meta</div><input style={z.inp} value={hDraft.meta} onChange={e=>setHDraft({...hDraft,meta:e.target.value})}/></div>
+<div style={{display:"flex",gap:8}}><button style={z.btn(habits[editH].active)} onClick={()=>updH(editH,{active:!habits[editH].active})}>{habits[editH].active?"Activo ✓":"Inactivo"}</button><button style={z.btnD} onClick={()=>{delH(editH);setEditH(null)}}>Eliminar</button><button style={z.btn(true)} onClick={saveHEdit}>Guardar</button><button style={z.btn(false)} onClick={()=>setEditH(null)}>Cerrar</button></div></div>}/>}
 </div>)};
 
 /* === HORARIO === */
 const HorarioPage=()=>{
-const[ec,setEc]=useState(null);
+const[ec,setEc]=useState(null);const[ev,setEv]=useState("");
 const updSlot=(ri,si,v)=>{const h=[...horario];h[ri]={...h[ri],slots:[...h[ri].slots]};h[ri].slots[si]=v;sv({...D,horario:h})};
 const addRow=()=>{sv({...D,horario:[...horario,{hour:"??:00",slots:["","","","","","",""]}]})};
 const delRow=i=>{const h=[...horario];h.splice(i,1);sv({...D,horario:h})};
 const updHr=(i,v)=>{const h=[...horario];h[i]={...h[i],hour:v};sv({...D,horario:h})};
+const startHr=(ri,v)=>{setEc(`h${ri}`);setEv(v)};
+const startSlot=(ri,si,v)=>{setEc(`${ri}-${si}`);setEv(v)};
+const cancelEdit=()=>{setEc(null);setEv("")};
+const saveEdit=()=>{if(!ec)return;if(ec.startsWith("h")){updHr(+ec.slice(1),ev)}else{const[ri,si]=ec.split("-").map(Number);updSlot(ri,si,ev)}cancelEdit()};
 const colFor=v=>{if(!v)return{bg:"transparent",c:C.t3};if(v.includes("Gym"))return{bg:C.lime+"15",c:C.lime};if(v.includes("Work")||v.includes("Proyectos")||v.includes("Reuniones"))return{bg:C.blue+"15",c:C.blue};if(v.includes("Estudiar"))return{bg:C.cyan+"15",c:C.cyan};if(v.includes("Tenis")||v.includes("Pádel"))return{bg:C.orange+"15",c:C.orange};if(v.includes("Lectura"))return{bg:C.purple+"15",c:C.purple};if(v.includes("Descanso")||v.includes("Libre"))return{bg:C.t3+"15",c:C.t3};if(v.includes("Almuerzo"))return{bg:C.green+"15",c:C.green};return{bg:C.bg3,c:C.t1}};
 return(<div style={{animation:"fadeIn 0.3s ease-out"}}>
 <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}><div style={{fontSize:"1.3rem",fontWeight:700}}>📅 Horario</div><button style={z.btn(true)} onClick={addRow}>+ Franja</button></div>
 <div style={z.card}><div style={{overflowX:"auto"}}><table style={{width:"100%",borderCollapse:"collapse",minWidth:600}}>
 <thead><tr><th style={z.th}>Hora</th>{DOWS.map(d=><th key={d} style={{...z.th,textAlign:"center"}}>{d}</th>)}<th style={z.th}></th></tr></thead>
 <tbody>{horario.map((row,ri)=>(<tr key={ri}>
-<td style={{...z.td,padding:"4px"}}>{ec===`h${ri}`?<input style={{...z.inpM,padding:"4px",maxWidth:65}} value={row.hour} autoFocus onChange={e=>updHr(ri,e.target.value)} onBlur={()=>setEc(null)} onKeyDown={e=>e.key==="Enter"&&setEc(null)}/>:<span style={{fontFamily:"monospace",fontWeight:600,fontSize:"0.72rem",color:C.t3,cursor:"pointer"}} onClick={()=>setEc(`h${ri}`)}>{row.hour}</span>}</td>
-{row.slots.map((v,si)=>{const col=colFor(v);const key=`${ri}-${si}`;return<td key={si} style={{...z.td,textAlign:"center",background:col.bg,padding:"4px 2px"}} onClick={()=>setEc(key)}>
-{ec===key?<input style={{...z.inp,padding:"4px",fontSize:"0.7rem",textAlign:"center",maxWidth:110}} value={v} autoFocus onChange={e=>updSlot(ri,si,e.target.value)} onBlur={()=>setEc(null)} onKeyDown={e=>e.key==="Enter"&&setEc(null)}/>:<span style={{color:col.c,fontSize:"0.7rem",fontWeight:v?500:400,cursor:"pointer"}}>{v||"—"}</span>}</td>})}
+<td style={{...z.td,padding:"4px"}}>{ec===`h${ri}`?<input style={{...z.inpM,padding:"4px",maxWidth:65}} value={ev} autoFocus onChange={e=>setEv(e.target.value)} onBlur={saveEdit} onKeyDown={e=>{if(e.key==="Enter")saveEdit();if(e.key==="Escape")cancelEdit()}}/>:<span style={{fontFamily:"monospace",fontWeight:600,fontSize:"0.72rem",color:C.t3,cursor:"pointer"}} onClick={()=>startHr(ri,row.hour)}>{row.hour}</span>}</td>
+{row.slots.map((v,si)=>{const col=colFor(v);const key=`${ri}-${si}`;return<td key={si} style={{...z.td,textAlign:"center",background:col.bg,padding:"4px 2px"}} onClick={()=>startSlot(ri,si,v)}>
+{ec===key?<input style={{...z.inp,padding:"4px",fontSize:"0.7rem",textAlign:"center",maxWidth:110}} value={ev} autoFocus onChange={e=>setEv(e.target.value)} onBlur={saveEdit} onKeyDown={e=>{if(e.key==="Enter")saveEdit();if(e.key==="Escape")cancelEdit()}}/>:<span style={{color:col.c,fontSize:"0.7rem",fontWeight:v?500:400,cursor:"pointer"}}>{v||"—"}</span>}</td>})}
 <td style={z.td}><button style={{...z.btnD,padding:"2px 5px",fontSize:"0.5rem"}} onClick={()=>delRow(ri)}>✕</button></td></tr>))}</tbody></table></div></div></div>)};
 
 /* === LECTURA === */
